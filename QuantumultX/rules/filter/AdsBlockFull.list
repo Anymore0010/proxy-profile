@@ -1,11 +1,12 @@
 # 由 tools/vendor-rules.mjs 自动生成 —— 请勿手工编辑
-# 合并来源（4 个，按顺序优先）:
+# 合并来源（5 个，按顺序优先）:
 #   广告平台拦截器（kelee，白名单优先）  QuantumultX/rules/filter/kelee/BlockAdvertisers.list
 #   广告拦截合集（fmz）  https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list
 #   Advertising（blackmatrix7，策略列是字面量 advertising）  https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list
 #   AWAvenue 秋风广告规则（本仓库 vendor 产物）  QuantumultX/rules/filter/AWAvenue.list
+#   可莉广告过滤器（kelee 插件）  QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list
 # 去重键: (类型, 值)；策略取先出现的来源
-# 规则数: 288195
+# 规则数: 288199
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
@@ -288223,3 +288224,12 @@ host-keyword, -ad.sm.cn, reject
 host-keyword, -ad.video.yximgs.com, reject
 host-keyword, -ad.wtzw.com, reject
 host-keyword, -be-pack-sign.pglstatp-toutiao.com, reject
+################################################################
+# 第 5 块来源: 可莉广告过滤器（kelee 插件）
+#   QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list
+#   本块贡献 4 条（与前面重复的已跳过，先到者优先）
+################################################################
+host, tracking.intl.miui.com, reject
+host, mall-dsp2.qinlinkeji.com, reject
+host, mallapi2.qinlinkeji.com, reject
+host, open-pixon.ads-pixiv.net, reject

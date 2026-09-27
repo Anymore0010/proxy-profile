@@ -303,6 +303,10 @@ for (const f of toVendorOnly) {
         if (added0) {
           rwBody.push(...sectionMarker(rwIdx + 1, m, added0));
           rwBody.push(...blockLines0);
+          // ⚠ 必须累加 rwCount：漏了会让头部「重写规则数」比实际少 raw_rewrite 的条数
+          // （实测 2377 vs 实际 2418，差 41），并让「整组只有 raw_rewrite」的条目
+          // 被下面的 `rwCount === 0` 误判为「结果为空」而跳过写入。
+          rwCount += added0;
         }
         rwIdx++;
         perSource.push(`${m.tag}: ${added0} 条`);

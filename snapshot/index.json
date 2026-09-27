@@ -1,8 +1,8 @@
 {
   "repository": "Anymore0010/proxy-profile",
   "ref": "master",
-  "total": 175,
-  "mirrored": 175,
+  "total": 177,
+  "mirrored": 177,
   "failed": 0,
   "exclusionMisses": [],
   "resources": [
@@ -19,6 +19,14 @@
       "kind": "rewrite",
       "url": "https://raw.githubusercontent.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.quanx.conf",
       "snapshot": "snapshot/github.com/chavyleung/scripts/master/box/rewrite/boxjs.rewrite.quanx.conf",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "rewrite-sub-store",
+      "kind": "rewrite",
+      "url": "https://raw.githubusercontent.com/sub-store-org/Sub-Store/master/config/QX.snippet",
+      "snapshot": "snapshot/github.com/sub-store-org/Sub-Store/master/config/QX.snippet",
       "status": 200,
       "error": null
     },
@@ -231,18 +239,10 @@
       "error": null
     },
     {
-      "id": "merge-filter-ads-max",
+      "id": "merge-filter-ads-max-lite",
       "kind": "filter",
       "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list",
       "snapshot": "snapshot/github.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list",
-      "status": 200,
-      "error": null
-    },
-    {
-      "id": "merge-filter-ads-max",
-      "kind": "filter",
-      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list",
-      "snapshot": "snapshot/github.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list",
       "status": 200,
       "error": null
     },
@@ -251,6 +251,14 @@
       "kind": "filter",
       "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AdvertisingLite/AdvertisingLite.list",
       "snapshot": "snapshot/github.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AdvertisingLite/AdvertisingLite.list",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "merge-filter-ads-max",
+      "kind": "filter",
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list",
+      "snapshot": "snapshot/github.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list",
       "status": 200,
       "error": null
     },
@@ -383,6 +391,30 @@
       "error": null
     },
     {
+      "id": "icon-filter-kelee-Block_HTTPDNS",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png",
+      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "icon-filter-kelee-Prevent_DNS_Leaks",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png",
+      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "icon-filter-ads-max-lite",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
+      "snapshot": "snapshot/github.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
+      "status": 200,
+      "error": null
+    },
+    {
       "id": "icon-filter-kelee-12306_remove_ads",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png",
@@ -415,14 +447,6 @@
       "error": null
     },
     {
-      "id": "icon-filter-kelee-Block_HTTPDNS",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/HTTPDNS.png",
-      "status": 200,
-      "error": null
-    },
-    {
       "id": "icon-filter-kelee-DragonRead_remove_ads",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/DragonRead.png",
@@ -439,34 +463,10 @@
       "error": null
     },
     {
-      "id": "icon-filter-kelee-Prevent_DNS_Leaks",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/Prevent_DNS_Leaks.png",
-      "status": 200,
-      "error": null
-    },
-    {
       "id": "icon-filter-kelee-QQMusic_remove_ads",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/QQMusic.png",
       "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/QQMusic.png",
-      "status": 200,
-      "error": null
-    },
-    {
-      "id": "icon-filter-kelee-Remove_ads_by_keli",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/KeLee.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/KeLee.png",
-      "status": 200,
-      "error": null
-    },
-    {
-      "id": "icon-filter-kelee-Script-Hub",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png",
       "status": 200,
       "error": null
     },
@@ -519,10 +519,10 @@
       "error": null
     },
     {
-      "id": "icon-filter-ads-max",
+      "id": "icon-filter-kelee-Script-Hub",
       "kind": "icon",
-      "url": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
-      "snapshot": "snapshot/github.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png",
+      "snapshot": "snapshot/github.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png",
       "status": 200,
       "error": null
     },
@@ -607,6 +607,14 @@
       "error": null
     },
     {
+      "id": "icon-filter-cn-region",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/Orz-3/mini/master/Color/CN.png",
+      "snapshot": "snapshot/github.com/Orz-3/mini/master/Color/CN.png",
+      "status": 200,
+      "error": null
+    },
+    {
       "id": "icon-filter-lan",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Available.png",
@@ -615,10 +623,18 @@
       "error": null
     },
     {
-      "id": "icon-filter-cn-region",
+      "id": "icon-rewrite-irongo-weatherkit",
       "kind": "icon",
-      "url": "https://raw.githubusercontent.com/Orz-3/mini/master/Color/CN.png",
-      "snapshot": "snapshot/github.com/Orz-3/mini/master/Color/CN.png",
+      "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Apple_Weather.png",
+      "snapshot": "snapshot/github.com/fmz200/wool_scripts/main/icons/apps/Apple_Weather.png",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "icon-rewrite-kelee-JD_Price",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JD.png",
+      "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/JD.png",
       "status": 200,
       "error": null
     },
@@ -643,14 +659,6 @@
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/FleaMarket.png",
       "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/FleaMarket.png",
-      "status": 200,
-      "error": null
-    },
-    {
-      "id": "icon-rewrite-kelee-JD_remove_ads",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/JD.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/JD.png",
       "status": 200,
       "error": null
     },
@@ -719,14 +727,6 @@
       "error": null
     },
     {
-      "id": "icon-rewrite-irongo-weatherkit",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Apple_Weather.png",
-      "snapshot": "snapshot/github.com/fmz200/wool_scripts/main/icons/apps/Apple_Weather.png",
-      "status": 200,
-      "error": null
-    },
-    {
       "id": "icon-rewrite-boxjs",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/BoxJS.png",
@@ -755,6 +755,22 @@
       "kind": "js",
       "url": "https://raw.githubusercontent.com/chavyleung/scripts/master/box/chavy.boxjs.js",
       "snapshot": "snapshot/github.com/chavyleung/scripts/master/box/chavy.boxjs.js",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "script:sub-store-1.min.js",
+      "kind": "js",
+      "url": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js",
+      "snapshot": "snapshot/host/github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-1.min.js",
+      "status": 200,
+      "error": null
+    },
+    {
+      "id": "script:sub-store-0.min.js",
+      "kind": "js",
+      "url": "https://github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
+      "snapshot": "snapshot/host/github.com/sub-store-org/Sub-Store/releases/latest/download/sub-store-0.min.js",
       "status": 200,
       "error": null
     },
