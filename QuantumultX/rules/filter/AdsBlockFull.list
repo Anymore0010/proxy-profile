@@ -1,5 +1,6 @@
 # 由 tools/vendor-rules.mjs 自动生成 —— 请勿手工编辑
-# 合并来源（5 个，按顺序优先）:
+# 合并来源（6 个，按顺序优先）:
+#   我的分流（手工维护，永远优先）  QuantumultX/rules/filter/My.list
 #   广告平台拦截器（kelee，白名单优先）  QuantumultX/rules/filter/kelee/BlockAdvertisers.list
 #   广告拦截合集（fmz）  https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list
 #   Advertising（blackmatrix7，策略列是字面量 advertising）  https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list
@@ -10,7 +11,14 @@
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
-# 第 1 块来源: 广告平台拦截器（kelee，白名单优先）
+# 第 1 块来源: 我的分流（手工维护，永远优先）
+#   QuantumultX/rules/filter/My.list
+#   本块贡献 2 条（与前面重复的已跳过，先到者优先）
+################################################################
+host, ad.12306.cn, direct
+host-suffix, cupid.iqiyi.com, direct
+################################################################
+# 第 2 块来源: 广告平台拦截器（kelee，白名单优先）
 #   QuantumultX/rules/filter/kelee/BlockAdvertisers.list
 #   本块贡献 325 条（与前面重复的已跳过，先到者优先）
 ################################################################
@@ -340,9 +348,9 @@ host-suffix, tobidad.cn, reject
 host-suffix, tobidad.com, reject
 host, ep7.facebook.com, reject
 ################################################################
-# 第 2 块来源: 广告拦截合集（fmz）
+# 第 3 块来源: 广告拦截合集（fmz）
 #   https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list
-#   本块贡献 2594 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 2593 条（与前面重复的已跳过，先到者优先）
 ################################################################
 host-suffix, v3.fstats.xyz, reject
 host-suffix, wss.haoyundmn.com, reject
@@ -539,7 +547,6 @@ host, ef-dongfeng.tanx.com, reject
 host, iqiyim.adtrack.enlightent.cn, reject
 host, t7z.cupid.iqiyi.com, reject
 host, t7z.cupid.ptqy.gitv.tv, reject
-host-suffix, cupid.iqiyi.com, reject
 host-suffix, t7z.cupid.iqiyi.com, reject
 host-suffix, static-s.iqiyi.com, reject
 host-suffix, a.ckm.iqiyi.com, reject
@@ -2939,7 +2946,7 @@ host-suffix, zedo.com, reject
 host-suffix, d8.zedo.com, reject
 host-suffix, z1.zedo.com, reject
 ################################################################
-# 第 3 块来源: Advertising（blackmatrix7，策略列是字面量 advertising）
+# 第 4 块来源: Advertising（blackmatrix7，策略列是字面量 advertising）
 #   https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list
 #   本块贡献 284489 条（与前面重复的已跳过，先到者优先）
 ################################################################
@@ -287433,9 +287440,9 @@ ip-cidr, 88.42.84.136/32, reject
 ip6-cidr, 2402:4e00:1900:1700:0:9554:1ad9:c3a/128, reject
 ip6-cidr, 240e:928:1400:10::25/128, reject
 ################################################################
-# 第 4 块来源: AWAvenue 秋风广告规则（本仓库 vendor 产物）
+# 第 5 块来源: AWAvenue 秋风广告规则（本仓库 vendor 产物）
 #   QuantumultX/rules/filter/AWAvenue.list
-#   本块贡献 787 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 786 条（与前面重复的已跳过，先到者优先）
 ################################################################
 host, 1500020991.vodplayer.wxamedia.com, reject
 host, 1500022744.vodplayer.wxamedia.com, reject
@@ -287451,7 +287458,6 @@ host, ad-scope.com.cn, reject
 host, ad-sdk-config.youdao.com, reject
 host, ad-splash-tracking.hktvmall.com, reject
 host, ad-splash.hktvmall.com, reject
-host, ad.12306.cn, reject
 host, ad.51wnl.com, reject
 host, ad.api.3g.youku.com, reject
 host, ad.bwton.com, reject
@@ -288225,7 +288231,7 @@ host-keyword, -ad.video.yximgs.com, reject
 host-keyword, -ad.wtzw.com, reject
 host-keyword, -be-pack-sign.pglstatp-toutiao.com, reject
 ################################################################
-# 第 5 块来源: 可莉广告过滤器（kelee 插件）
+# 第 6 块来源: 可莉广告过滤器（kelee 插件）
 #   QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list
 #   本块贡献 4 条（与前面重复的已跳过，先到者优先）
 ################################################################

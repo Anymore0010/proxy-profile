@@ -24,7 +24,7 @@
     },
     {
       "id": "filter-ads-max-lite",
-      "upstream": "QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AdvertisingLite/AdvertisingLite.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list",
+      "upstream": "QuantumultX/rules/filter/My.list + QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AdvertisingLite/AdvertisingLite.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list",
       "file": "QuantumultX/rules/filter/AdsBlock.list",
       "rules": 40025,
       "dropped": 0,
@@ -33,7 +33,7 @@
     },
     {
       "id": "filter-ads-max",
-      "upstream": "QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list",
+      "upstream": "QuantumultX/rules/filter/My.list + QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list",
       "file": "QuantumultX/rules/filter/AdsBlockFull.list",
       "rules": 288199,
       "dropped": 0,
@@ -51,7 +51,7 @@
     },
     {
       "id": "rewrite-ads-max",
-      "upstream": "QuantumultX/rules/rewrite/kelee/BlockAdvertisers.snippet + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/Advertising/Advertising.conf + QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf",
+      "upstream": "QuantumultX/rules/rewrite/My.snippet + QuantumultX/rules/rewrite/kelee/BlockAdvertisers.snippet + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/Advertising/Advertising.conf + QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf",
       "file": "QuantumultX/rules/rewrite/AdsBlock.snippet",
       "rules": 2408,
       "dropped": 0,
