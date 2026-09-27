@@ -6,7 +6,7 @@
 #   可莉广告过滤器（kelee 插件）  QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet
 #   AdvertisingLite（blackmatrix7，重写规则·新版）  https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf
 # 去重键: (URL正则, 动作)，忽略脚本 URL
-# 重写规则数: 2418
+# 重写规则数: 2410
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
@@ -64,10 +64,9 @@
 ################################################################
 # 第 3 块来源: 广告拦截合集（fmz）
 #   https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet
-#   本块贡献 1538 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 1530 条（与前面重复的已跳过，先到者优先）
 ################################################################
 ^https?:\/\/gab\.122\.gov\.cn\/eapp\/m\/sysquery\/adver$ url reject
-^https?:\/\/ad\.12306\.cn\/ad\/ser\/getAdList url script-analyze-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/kokoryh/Script/master/js/12306.js
 ^https?:\/\/api\.21jingji\.com\/ad\/ url reject
 ^http?:\/\/tianqi\.2345\.com\/api\/content\/getContentFeeds\.php url reject-dict
 ^https?:\/\/ad\.life\.360\.cn\/v2\/app\/advertisement\/config\?sdk_ver= url reject-dict
@@ -94,7 +93,6 @@
 ^https:\/\/heic\.alicdn\.com\/imgextra\/i\d\/\d*\/?[\w!]+-\d-(octopus|tps-1125-1602|tps-1080-1920)\.(jp|pn)g_(1\d{3}|9\d{2})x(1\d{3}|9\d{2})q[59]0 url reject-dict
 ^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.cainiao\.adx\.flyad\.getad url reject-dict
 ^https:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(volvo\.secondfloor\.getconfig|wireless\.home\.newface\.awesome\.get) url reject-dict
-^https:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js
 ^https:\/\/api\.alipan\.com\/adrive\/v1\/file\/getTopFolders url reject-dict
 ^https:\/\/member\.alipan\.com\/v2\/activity\/sign_in_luckyBottle url reject-dict
 ^https?:\/\/gw\.aihuishou\.com\/app-portal\/home\/getadvertisement url reject
@@ -106,8 +104,6 @@
 ^https?:\/\/iface2\.iqiyi\.com\/ivos\/interact\/video\/data\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/video\/3\.0\/v_interface_proxy\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/views_pop\/3\.0\/pop_control\? url reject-dict
-^https?:\/\/search\.video\.iqiyi\.com\/q\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/cnftp.js
-^https?:\/\/(kjp|t7z)\.cupid\.iqiyi\.com\/mixer\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/cnftp.js
 ^https?:\/\/b2baifanfan\.baidu\.com\/crm\/web\/b2b\/im\/common\/getConfigByDeviceNum url reject-200
 ^https?:\/\/manager\.aiqiangua\.com:8080\/AqgNews\/api\/start_ad\.do url reject-dict
 ^https?:\/\/list-app-m\.i4\.cn\/(adclickcb|getHotSearchList|getopfstadinfo)\.xhtml url reject
@@ -318,7 +314,6 @@ http:\/\/ad\.myfriday\.cn\/d\/json\/1\.1 url reject
 ^https?:\/\/conf\.diditaxi\.com\.cn\/dynamic\/conf url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js
 ^https?:\/\/common\.diditaxi\.com\.cn\/common\/v\d\/usercenter\/me url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js
 ^https?:\/\/daijia\.kuaidadi\.com\/gateway url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js
-^https?:\/\/daijia\.kuaidadi\.com:443\/gateway url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js
 ^https?:\/\/common\.diditaxi\.com\.cn\/common\/v5 url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/didi/didiAds.js
 ^https?:\/\/as\.xiaojukeji\.com\/ep\/as\/conf\?ns=daijia-front&name= url reject-dict
 ^https?:\/\/daijia\.kuaidadi\.com\/gateway\?api=prado\.cms\.delivery\.batch&apiVe url reject-dict
@@ -969,9 +964,7 @@ https://ios.sspai.com/api/v3/recommend/page/get\?ad.*ios_home_modal url reject
 ^https?:\/\/ecard\.shenzhentong\.com\/wxweb\/bwxppub2\/QryAdvertList\.do url reject-200
 ^https?:\/\/haojia\.m\.smzdm\.com\/detail_modul\/other_modul\? url reject-dict
 ^https?:\/\/haojia-api\.smzdm\.com\/ranking_list\/articles\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js
-^https?:\/\/s-api\.smzdm\.com\/sou\/list_v10\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js
 ^https?:\/\/user-api\.smzdm\.com\/vip\/creator_user_center url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/smzdm_ads.js
-^https?:\/\/user-api\.smzdm\.com\/vip$ url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js
 ^https?:\/\/app-api\.smzdm\.com\/util\/loading url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js
 ^https?:\/\/user-api\.smzdm\.com\/vip\/bottom_card_list url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js
 ^https?:\/\/haojia-api\.smzdm\.com\/home\/list url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/smzdm/Smzdm.js
@@ -1080,7 +1073,6 @@ https://ios.sspai.com/api/v3/recommend/page/get\?ad.*ios_home_modal url reject
 ^https?:\/\/acs\.m\.taobao\.com\/gw\/mtop\.taobao\.idle\.home\.welcome url reject-dict
 ^https?:\/\/acs\.m\.taobao\.com\/gw\/mtop\.trip\.activity\.querytmsresources url reject-dict
 ^https?:\/\/guide-acs\.m\.taobao\.com\/gw\/mtop\.taobao\.(volvo\.secondfloor\.getconfig|wireless\.home\.newface\.awesome\.get) url reject-dict
-^https?:\/\/poplayer\.template\.alibaba\.com\/\w+\.json url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/myBlockAds.js
 ^https?:\/\/acs\.m\.taobao\.com\/gw\/mtop\.film\.mtopadvertiseapi\.(queryadvertise|queryloadingbanner)\/ url reject
 ^https?:\/\/bid\.adview\.cn\/agent\/getAd url reject
 ^https?:\/\/ccmsupport-sz\.tenpay\.com\/cgi-bin\/common\/ccm_page_element.cgi url reject

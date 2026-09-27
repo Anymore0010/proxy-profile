@@ -86,7 +86,23 @@ export function sameTarget(a, b) {
   if (!sameHost(a.domains, b.domains)) return false;
   const shared = [...a.pathTokens].filter((t) => b.pathTokens.has(t));
   const distinctive = shared.filter((t) => !NOISE.has(t));
-  // 判据：至少 2 个「有区分度」的共同词元。
-  // 只用总数会误报（见上面 NOISE 的例子）；只用 1 个又容易撞通用词。
-  return distinctive.length >= 2;
+  if (distinctive.length >= 2) return true;
+  // 短路径退化处理：路径里只有 ≤1 个词元时（如 `ad.12306.cn/ad/ser/getAdList`
+  // 去掉域名后只剩 {getadlist}），「≥2 个共同词元」永远不成立 —— 于是
+  // `sameTarget` 恒 false，两条防线**同时失明**：validate 的 checkRewriteDuplicates
+  // 与 vendor-rules 合并期的 excludedByStandalone 都漏掉它。
+  // 实测后果：`ad.12306.cn/ad/ser/getAdList` 同时被 AdsBlock 的
+  // `script-analyze-echo-response` 与 kelee 的 `jsonjq-response-body` 命中，
+  // 同一个 body 被两套逻辑处理（或后者永不执行）。
+  // 故当任一侧词元很少时，退化为「域名相同 + 路径串前缀一致」：
+  // 路径短到没词元可判，就只能靠字面比对，这比放行安全。
+  const fewTokens = a.pathTokens.size <= 1 || b.pathTokens.size <= 1;
+  if (fewTokens) {
+    const pa = [...a.pathTokens].join("/");
+    const pb = [...b.pathTokens].join("/");
+    if (pa && pa === pb) return true;
+    // 一侧无词元、另一侧也无可比词元时，域名相同即视为同一目标（宁可多报，不可漏防）
+    if (!pa && !pb) return true;
+  }
+  return false;
 }
