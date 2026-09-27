@@ -156,7 +156,12 @@ function convertRewrite(line, plugin) {
   }
   if (a === "302" || a === "307") return `${pattern} url ${a} ${rest.trim()}`;
 
-  skip(plugin, "Rewrite", line, `QX 无对应动作名（${action}）`);
+  // 注意措辞：这里是**转换器没实现**，不等于 QX 做不到。已核实的等价物：
+  //   mock-response-body            -> script-echo-response / echo-response（返回固定 body）
+  //   response-body-replace-regex   -> `url response-body <正则> response-body <替换>`
+  //   header（重写请求 URL）          -> `url 302 <新URL>` / `url 307 <新URL>`
+  // 写错措辞会把「没实现」传播成「做不到」，下次维护就不会去补了。
+  skip(plugin, "Rewrite", line, `转换器未实现该动作（${action}）；QX 侧有等价物，见 TODO.md`);
   return null;
 }
 

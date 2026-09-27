@@ -104,7 +104,7 @@
       "name": "闲鱼去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 12,
+      "rewrites": 11,
       "hostnames": 2
     },
     {
@@ -368,13 +368,13 @@
       "plugin": "Remove_ads_by_keli.lpx",
       "section": "Rewrite",
       "line": "^https?:\\/\\/m\\.client\\.10010\\.com\\/mobileService\\/customer\\/accountListData\\.htm mock-response-body data-type=json data=\"{\"imgIndex\":\"0\",\"adv\":{\"startup_adv\":{\"advCntList\":[],\"buttonList\":[]}},\"respCode\":\"0000\"}\"",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Remove_ads_by_keli.lpx",
       "section": "Rewrite",
       "line": "^https?:\\/\\/cmds\\.omesoft\\.com\\/HypnotistWS\\.asmx response-body-replace-regex <GetADResult>\\.\\*\\?<\\/GetADResult> <GetADResult>{\"ret\":0,\"msg\":\"正常\",\"err_code\":0,\"data\":{\"ad\":[]}}</GetADResult>",
-      "reason": "QX 无对应动作名（response-body-replace-regex）"
+      "reason": "转换器未实现该动作（response-body-replace-regex）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
@@ -410,115 +410,115 @@
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "request if ${url} ~= /^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/e-commerce-interface\\/v1\\/ecommerce-user\\/get_shopping_info\\?/ then reject_dict(200)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "request if ${url} ~= /^https:\\/\\/line3-h5-mobile-api\\.biligame\\.com\\/game\\/live\\/large_card_material\\?/ then reject_dict(200)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\?/ then response.body.mock(\"json\", `{\"code\":0,\"message\":\"OK\",\"ttl\":1,\"data\":{\"max_time\":0,\"min_interval\":31536000,\"pull_interval\":31536000,\"keep_ids\":[],\"show\":[],\"list\":[{}],\"splash_request_id\":\"\"}}`, 200)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/ap[ip]\\.bilibili\\.com\\/x\\/(resource\\/(top\\/activity|patch\\/tab(\\/v2)?)|v2\\/search\\/square|vip\\/ads\\/materials)\\?/ then response.body.mock(\"json\", `{\"code\":-404,\"message\":\"-404\",\"ttl\":1,\"data\":null}`, 200)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/activity\\/deliver\\/material\\/receive\\?/ then response.body.mock(\"json\", `{\"code\":0,\"data\":{\"closeType\":\"close_win\",\"container\":[],\"showTime\":\"\"},\"message\":\"success\"}`, 200)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} == \"https://grpc.biliapi.net/bilibili.app.interface.v1.Teenagers/ModeStatus\" then response.body.mock(\"text\", \"AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA\", 200, true) | response.header.set(\"grpc-status\", \"0\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} == \"https://grpc.biliapi.net/bilibili.app.interface.v1.Search/DefaultWords\" then response.body.mock(\"text\", \"AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=\", 200, true) | response.header.set(\"grpc-status\", \"0\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.(view\\.v1\\.View\\/TFInfo|viewunite\\.v1\\.View\\/(PlayPause|ViewEndPage))$/ then response.body.mock(\"text\", \"AAAAAAA=\", 200, true) | response.header.set(\"grpc-status\", \"0\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/open-interface\\/v2\\/tracker\\/conf\\?/ then response.json.jq(`.data.domains=[\"wss://tracker.chat.bilibili.com\"]`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/api\\.bilibili\\.com\\/x\\/pd-proxy\\/tracker\\?/ then response.json.jq(`.data[][]?=\"stun.chat.bilibili.com:3478\"`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/view\\/v2\\/app\\/season\\?/ then response.json.jq(`del(.data.payment)`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/page\\/channel\\?/ then response.json.jq(`.data.modules |= map(select(.type != \"TIP\") | if .type == \"BANNER\" then .module_data.items |= map(select(.url | startswith(\"https://www.bilibili.com/blackboard/era/\") | not)) else . end)`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/resource\\/show\\/skin\\?/ then response.json.delete(\"data.common_equip\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/resource\\/show\\/tab\\/v2\\?/ then response.json.jq_file(\"https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/jq/bilibili.tab.jq\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\?/ then response.json.jq(`.data |= with_entries(if .key | IN(\"show\", \"event_list\") then .value = [] else . end)`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\?/ then response.json.jq(`if .data.items then .data.items |= map(select((.banner_item == null) and (.ad_info == null) and (.card_goto == \"av\") and (.card_type | IN(\"small_cover_v2\", \"large_cover_single_v9\", \"large_cover_v1\")))) end`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\/story\\?/ then response.json.jq(`if .data.items then .data.items |= map(select((.ad_info == null) and (.card_goto | IN(\"vertical_ad_av\", \"vertical_ad_live\", \"vertical_ad_picture\") | not)) | del(.story_cart_icon, .free_flow_toast, .image_infos, .course_info, .game_info)) end`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/account\\/mine(\\/ipad)?\\?/ then response.json.jq_file(\"https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/jq/bilibili.mine.jq\")",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
       "line": "response if ${url} ~= /^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/account\\/myinfo\\?/ then response.json.jq(`.data.vip |= if . != null and .status == 0 then . + { status: 1, type: 2, due_date: 9005270400000, role: 15 } else . end`)",
-      "reason": "QX 无对应动作名（if）"
+      "reason": "转换器未实现该动作（if）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "bilibili.lpx",
@@ -665,6 +665,12 @@
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个）"
     },
     {
+      "plugin": "FleaMarket_remove_ads.lpx",
+      "section": "Rewrite",
+      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\/ url jsonjq-response-body '.data.components |= map(select(.render | . == \"orderStatusVO\" or . == \"addressInfoVO\" or . == \"orderInfoVO\"))'",
+      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个）"
+    },
+    {
       "plugin": "Spotify_remove_ads.lpx",
       "section": "Rule",
       "line": "AND, ((DOMAIN-SUFFIX, spotify.com), (PROTOCOL, QUIC)), REJECT",
@@ -674,7 +680,7 @@
       "plugin": "Spotify_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/(?:\\w+-spclient|spclient\\.wg)\\.spotify\\.com(?::443)?\\/artistview\\/v1\\/artist\\/(.*)&platform=iphone header https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad",
-      "reason": "QX 无对应动作名（header）"
+      "reason": "转换器未实现该动作（header）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "JD_remove_ads.lpx",
@@ -818,43 +824,43 @@
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? mock-response-body data-type=text status-code=200 data=\"{\"code\":0,\"message\":\"OK\",\"ttl\":1,\"data\":{\"max_time\":0,\"min_interval\":31536000,\"pull_interval\":31536000,\"keep_ids\":[],\"show\":[],\"list\":[{}],\"splash_request_id\":\"\"}}\"",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/activity\\/deliver\\/material\\/receive\\? mock-response-body data-type=text status-code=200 data=\"{\"code\":0,\"data\":{\"closeType\":\"close_win\",\"container\":[],\"showTime\":\"\"},\"message\":\"success\"}\"",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/ap[ip]\\.bilibili\\.com\\/x\\/(resource\\/(top\\/activity|patch\\/tab(\\/v2)?)|v2\\/search\\/square|vip\\/ads\\/materials)\\? mock-response-body data-type=text status-code=200 data=\"{\"code\":-404,\"message\":\"-404\",\"ttl\":1,\"data\":null}\"",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.interface\\.v1\\.Teenagers\\/ModeStatus$ mock-response-body data-type=text data=\"AAAAABMKEQgCEgl0ZWVuYWdlcnMgAioA\" mock-data-is-base64=true",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.interface\\.v1\\.Search\\/DefaultWords$ mock-response-body data-type=text data=\"AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp+aIlnVw5Li7KAE=\" mock-data-is-base64=true",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.(view\\.v1\\.View\\/TFInfo|viewunite\\.v1\\.View\\/(PlayPause|ViewEndPage))$ mock-response-body data-type=text data=\"AAAAAAA=\" mock-data-is-base64=true",
-      "reason": "QX 无对应动作名（mock-response-body）"
+      "reason": "转换器未实现该动作（mock-response-body）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.(interface\\.v1\\.(Teenagers\\/ModeStatus|Search\\/DefaultWords)|view\\.v1\\.View\\/TFInfo|viewunite\\.v1\\.View\\/(PlayPause|ViewEndPage))$ response-header-add grpc-status 0",
-      "reason": "QX 无对应动作名（response-header-add）"
+      "reason": "转换器未实现该动作（response-header-add）；QX 侧有等价物，见 TODO.md"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",

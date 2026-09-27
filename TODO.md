@@ -12,10 +12,17 @@ v1.0.0 迁移时确认的硬缺口 —— **QX 无等价物**，不是遗漏。�
 - [ ] **B 站 stun/tracker 组合拦截**：`chat.bilibili.com + (stun|tracker|p2p)` 的 AND/OR
   组合 reject 在 Loon 插件里有（kokoryh bilibili.lpx + kelee Bilibili_remove_ads.lpx 各一份），
   QX 分流不支持逻辑组合、也没有重写等价物 —— 考虑在 `My.snippet` 用 URL 正则近似复刻。
-- [ ] **`mock-response-body` 动作（7 条）**：QX 无此动作名，可评估改用
-  `reject-dict` / `jsonjq-response-body` 是否等价（B 站 splash 等）。
-- [ ] **`header` 动作（1 条，Spotify）** 与 **`response-body-replace-regex`（1 条，联通）**：
-  QX 无对应动作，逐条评估替代写法或放弃。
+- [ ] **`mock-response-body`（7 条）**：动作是「直接伪造响应体，不请求上游」。
+  **QX 有等价物**：`script-echo-response`（脚本返回固定 body）或 `echo-response`（返回
+  QX Data 目录下的本地文件）—— 见官方 sample.conf。需要落小脚本/文件。影响：B 站开屏广告、
+  青少年模式伪装、搜索默认词、播放结束页、联通账单广告位。
+- [ ] **`response-body-replace-regex`（1 条，联通 HypnotistWS.asmx）**：
+  **QX 原生支持 `url response-body <正则> response-body <替换串>`，一行即可迁**。
+- [ ] **`header`（1 条，Spotify）**：动作名是 header，实际是**重写请求 URL**
+  （手机端 → 伪装 iPad 端）。**QX 等价物是 `url 302 <新URL>`**，一行即可迁。
+- [ ] **`if` 条件重写（19 条）** 与 **`response-header-add`（1 条）**：待逐条评估。
+  注：`_conversion-report.json` 里这些条目标注的是「转换器未实现」，**不是「QX 做不到」**，
+  别据旧措辞放弃。
 - [ ] **`generic` 菜单脚本（Node_detection_tool 3 个）**：Loon 菜单触发脚本 QX 无挂载点；
   `[task_local]` 已有 6 个同类（NodeLinkCheck / traffic-check / server-info-plus…）覆盖大部分用途，
   缺的是「入口/落地检测 + 解锁检测」。注意：kelee 版依赖 Loon 的节点上下文（$environment.params），
