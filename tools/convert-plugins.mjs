@@ -282,6 +282,48 @@ async function inlineJqFile(url, plugin, line) {
   return inline;
 }
 
+/**
+ * 把 jq 的 `X | IN(a, b, c)` 改写成 `X == a or X == b or X == c`。
+ *
+ * 为什么：QX 的 jsonjq 是**受限实现**，不是完整 jq。实测扫遍仓库里所有 QX 原生资源
+ * （bm7 / fmz / sub-store 等，31 条 jsonjq 规则），用过函数只有
+ * `del / map / select / if / test / has` + `and / or / |=` —— **`IN(` 一次都没出现**；
+ * 而我们转换产物里有 5 处 `IN(`（拼多多 / 知乎 / 哔哩哔哩）。
+ * 用户实测「拼多多底部按钮仍不生效」，而该表达式在完整 jq（python-jq）里求值正确，
+ * 说明差异在**引擎能力**而非表达式逻辑 —— `IN` 是被怀疑的元凶。
+ * `==` + `or` 是原生资源里出现过的写法，语义与 `IN` 等价。
+ */
+function rewriteInToOr(expr) {
+  // 只处理 `| IN(...)` 形态（IN 的左输入就是它前面那一段，需回退到上一个 `|` 或 `(`）
+  let out = expr;
+  for (let guard = 0; guard < 20; guard++) {
+    const i = out.indexOf("| IN(");
+    if (i < 0) break;
+    // 找左操作数起点：向前回退到最近的 `|` / `(` / `del(` 的边界
+    let s = i - 1;
+    while (s >= 0 && !/[|(,]/.test(out[s])) s--;
+    s = s < 0 ? 0 : s + 1;
+    const lhs = out.slice(s, i).trim();
+    // 匹配 IN(...) 的结束括号
+    let d = 0, e = i + 4;
+    for (let j = i + 4; j < out.length; j++) {
+      if (out[j] === "(") d++;
+      else if (out[j] === ")") { d--; if (d === 0) { e = j; break; } }
+    }
+    const args = out.slice(i + 5, e);
+    if (!lhs) break;
+    const parts = args.split(",").map((x) => x.trim()).filter(Boolean);
+    if (!parts.length) break;
+    // `if COND | IN(...) then …` 形态：条件里必须保留 `if`，比较链加括号
+    const isIfCond = /^if\s+/.test(lhs);
+    const bare = isIfCond ? lhs.replace(/^if\s+/, "") : lhs;
+    const cmp = parts.map((a) => `${bare} == ${a}`).join(" or ");
+    const repl = isIfCond ? `if (${cmp})` : cmp;
+    out = out.slice(0, s) + repl + out.slice(e + 1);
+  }
+  return out;
+}
+
 /** 把 `a b c` 拆成 (search, replace)：QX 的 response-body 需要成对的两段，且都不得含空白。 */
 function splitTwoFields(rest) {
   const s = rest.trim();
@@ -944,8 +986,10 @@ for (const p of pluginOrder) {
     return order.map((o) => {
       if (o.raw !== undefined) return o.raw;
       const exprs = groups.get(o.key);
-      if (exprs.length === 1) return `${o.key} '${exprs[0]}'`;
-      return `${o.key} '${exprs.join(" | ")}'`;
+      const joined = exprs.join(" | ");
+      // `IN(a,b,c)` -> `x == a or x == b or x == c`：QX 的 jsonjq 是受限实现，
+      // 实测扫遍仓库里所有 QX 原生资源（31 条 jsonjq 规则）从未出现 `IN(`。
+      return `${o.key} '${rewriteInToOr(joined)}'`;
     });
   };
 

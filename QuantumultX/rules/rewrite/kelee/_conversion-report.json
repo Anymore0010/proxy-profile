@@ -485,19 +485,19 @@
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? url jsonjq-response-body '.data |= with_entries(if .key | IN(\"show\", \"event_list\") then .value = [] else . end)'",
+      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/(show|event\\/list2)\\? url jsonjq-response-body '.data |= with_entries(if (.key == \"show\" or .key == \"event_list\") then .value = [] else . end)'",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\? url jsonjq-response-body 'if .data.items then .data.items |= map(select((.banner_item == null) and (.ad_info == null) and (.card_goto == \"av\") and (.card_type | IN(\"small_cover_v2\", \"large_cover_single_v9\", \"large_cover_v1\")))) end'",
+      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\? url jsonjq-response-body 'if .data.items then .data.items |= map(select((.banner_item == null) and (.ad_info == null) and (.card_goto == \"av\") and (.card_type == \"small_cover_v2\" or .card_type == \"large_cover_single_v9\" or .card_type == \"large_cover_v1\"))) end'",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\/story\\? url jsonjq-response-body 'if .data.items then .data.items |= map(select((.ad_info == null) and (.card_goto | IN(\"vertical_ad_av\", \"vertical_ad_live\", \"vertical_ad_picture\") | not)) | del(.story_cart_icon, .free_flow_toast, .image_infos, .course_info, .game_info)) end'",
+      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/feed\\/index\\/story\\? url jsonjq-response-body 'if .data.items then .data.items |= map(select((.ad_info == null) and (.card_goto == \"vertical_ad_av\" or .card_goto == \"vertical_ad_live\" or .card_goto == \"vertical_ad_picture\" | not)) | del(.story_cart_icon, .free_flow_toast, .image_infos, .course_info, .game_info)) end'",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {

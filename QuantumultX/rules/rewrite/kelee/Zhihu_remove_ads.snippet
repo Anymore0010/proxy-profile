@@ -17,7 +17,7 @@
 ^https:\/\/api\.zhihu\.com\/search\/related_queries\/question\/\d+$ url reject-dict
 ^https:\/\/api\.zhihu\.com\/search\/recommend_query\/v\d\? url jsonjq-response-body '.recommend_queries.queries |= map(select(.type == "normal"))'
 ^https:\/\/api\.zhihu\.com\/search_v\d\? url jsonjq-response-body 'del(.pendant)'
-^https:\/\/api\.zhihu\.com\/search\/tabs\? url jsonjq-response-body '.data |= map(select(.t | IN("general", "ai_zhida", "recent", "people", "zvideo", "ring", "topic", "podcast", "column", "pin", "favlist")))'
+^https:\/\/api\.zhihu\.com\/search\/tabs\? url jsonjq-response-body '.data |= map(select(.t == "general" or .t == "ai_zhida" or .t == "recent" or .t == "people" or .t == "zvideo" or .t == "ring" or .t == "topic" or .t == "podcast" or .t == "column" or .t == "pin" or .t == "favlist"))'
 ^https:\/\/zhida\.zhihu\.com\/ai_ingress\/knowledge\/square\/categories\/feeds\?categoryId=1%7D$ url reject-dict
 ^https:\/\/zhida\.zhihu\.com\/ai_ingress\/ai_chat\/guidance$ url reject-dict
 ^https:\/\/api\.zhihu\.com\/content-distribution-core\/bubble\/common\/show$ url reject-dict

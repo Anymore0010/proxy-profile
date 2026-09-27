@@ -509,20 +509,24 @@ function checkOverlongRuleLines() {
 }
 
 /**
- * 同一产物内「同 URL 多条 body 重写」检查。
+ * 同一产物内「同 URL 多条 body 重写」**告警**（不是错误）。
  *
- * QX 与 Loon 的**行为差异**：Loon 对同 URL 的多条 body 重写是链式叠加（作者刻意分开写
- * 以分段处理），QX 只执行**先匹配的第一条**，后面的静默不生效。
- * 实测踩到：拼多多 `api/alexa/homepage/hub?` 的两条（`del(banner)` 与 `bottom_tabs 过滤`）
- * 在 QX 下只跑第一条 → 用户报「拼多多去除底部按钮还是不生效」。
+ * 背景与结论（诚实记录，避免下次维护按错的假设行事）：
+ * 本仓库文档对 QX 的行为有两处**互相矛盾**的说法 ——
+ *   validate.mjs:422 / 571、rule-target.mjs:5：「两条命中同一 URL 时会先后各跑一次」
+ *   （即**链式叠加**，与 Loon 一致）
+ * 而转换器曾按「QX 只执行第一条」的假设把同 URL 多条 jq 串成一条。
+ * 用户实测「拼多多底部按钮不生效」在**合并后仍不生效** → 说明「只跑第一条」假设不成立，
+ * 真实原因是表达式里的 `IN(...)`（QX 的 jsonjq 是受限实现，原生资源 31 条规则从未用过 `IN(`）。
+ * 现已把 `IN(a,b,c)` 改写成 `x == a or x == b or x == c`。
  *
- * 转换器已把同一插件内的同 URL 多条 jsonjq 用 ` | ` 串成一条；
- * 这条断言保证以后新增的插件也不会再漏（跨源的那类由 checkRewriteDuplicates 管）。
+ * 转换器仍会把同 URL 多条 jq 串成一条 —— 那是**语义等价的合并**（jq 的 `|` 就是管道），
+ * 减少规则数、消除歧义；但不再当错误报。这里只提示，便于 review。
  */
 function checkSameUrlBodyRewrites() {
   const dir = join(ROOT, "QuantumultX", "rules");
   if (!existsSync(dir)) return 0;
-  let bad = 0;
+  let n = 0;
   for (const f of readdirSync(dir, { recursive: true }).map(String)) {
     if (!/\.snippet$/.test(f)) continue;
     const rel = `QuantumultX/rules/${f}`;
@@ -532,14 +536,13 @@ function checkSameUrlBodyRewrites() {
       if (!s || s.startsWith("#") || !/\surl\s+(jsonjq-|script-)/.test(s)) continue;
       const pat = s.split(/\s+url\s+/)[0];
       if (seen.has(pat)) {
-        err(rel, 0,
-          `同一 URL 有 ${seen.get(pat) + 1} 条 body 重写 —— QX 只执行第一条（Loon 是链式叠加）: ${pat.slice(0, 80)}`);
-        bad++;
+        warn(rel, 0, `同一 URL 有 ${seen.get(pat) + 1} 条 body 重写（Loon 链式叠加；QX 行为未证实）: ${pat.slice(0, 70)}`);
+        n++;
       }
       seen.set(pat, (seen.get(pat) ?? 0) + 1);
     }
   }
-  return bad;
+  return n;
 }
 
 function checkRewriteDuplicates() {
