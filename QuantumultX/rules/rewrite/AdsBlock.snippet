@@ -6,7 +6,7 @@
 #   可莉广告过滤器（kelee 插件）  QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet
 #   AdvertisingLite（blackmatrix7，重写规则·新版）  https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf
 # 去重键: (URL正则, 动作)，忽略脚本 URL
-# 重写规则数: 2410
+# 重写规则数: 2408
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
@@ -64,7 +64,7 @@
 ################################################################
 # 第 3 块来源: 广告拦截合集（fmz）
 #   https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet
-#   本块贡献 1530 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 1528 条（与前面重复的已跳过，先到者优先）
 ################################################################
 ^https?:\/\/gab\.122\.gov\.cn\/eapp\/m\/sysquery\/adver$ url reject
 ^https?:\/\/api\.21jingji\.com\/ad\/ url reject
@@ -100,7 +100,6 @@
 ^https?:\/\/api\.bjxkhc\.com\/index\.php\/app\/ios\/pay/ok$ url reject-dict
 ^https?:\/\/api\.bjxkhc\.com\/index\.php\/app\/ios\/ads\/ url reject
 ^https?:\/\/act\.vip\.iqiyi\.com\/interact\/api\/v2\/show\? url reject-dict
-^https?:\/\/iface2\.iqiyi\.com\/control\/3\.0\/init_proxy\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/cnftp.js
 ^https?:\/\/iface2\.iqiyi\.com\/ivos\/interact\/video\/data\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/video\/3\.0\/v_interface_proxy\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/views_pop\/3\.0\/pop_control\? url reject-dict
@@ -1229,7 +1228,6 @@ https?:\/\/(ipv4|interface\d?)\.music\.163\.com\/e?api\/(batch|v\d\/resource\/co
 ^https?:\/\/thor\.weidian\.com\/ares\/home\.splash url reject-200
 ^https?:\/\/mp\.weixin\.qq\.com\/mp\/getappmsgad url response-body advertisement response-body fmz200
 ^https?:\/\/mp\.weixin\.qq\.com\/mp\/cps_product_info\?action url reject-dict
-^https\:\/\/(weixin110\.qq|security.wechat)\.com\/cgi-bin\/mmspamsupport-bin\/newredirectconfirmcgi\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/zZPiglet/Task/master/asset/UnblockURLinWeChat.js
 ^https?:\/\/b\.appsimg\.com\/upload\/momin url reject
 ^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/activity\/advertisement\/get url reject-200
 ^https?:\/\/mapi\.appvipshop\.com\/vips-mobile\/rest\/iosAdInfo\/report url reject

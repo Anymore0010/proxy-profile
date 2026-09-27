@@ -2,7 +2,7 @@
   "total": 17,
   "ok": 17,
   "failed": 0,
-  "rules": 334891,
+  "rules": 334889,
   "resources": [
     {
       "id": "filter-awavenue",
@@ -53,7 +53,7 @@
       "id": "rewrite-ads-max",
       "upstream": "QuantumultX/rules/rewrite/kelee/BlockAdvertisers.snippet + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/Advertising/Advertising.conf + QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf",
       "file": "QuantumultX/rules/rewrite/AdsBlock.snippet",
-      "rules": 2410,
+      "rules": 2408,
       "dropped": 0,
       "adjusted": 0,
       "error": null
