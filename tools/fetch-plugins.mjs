@@ -140,6 +140,10 @@ writeFileSync(join(OUT_DIR, "index.json"), JSON.stringify(meta, null, 2) + "\n",
 
 console.log(`\n完成: ${fetched} 新抓 / ${skipped} 跳过 / ${failed} 失败`);
 if (failed) {
-  console.error("有插件抓取失败——index.json 里记了 error 字段。");
-  process.exit(1);
+  // **不要**因此退出非零：抓取失败时旧副本仍在（「先抓后覆盖」的设计），
+  // convert-plugins 会照常用上一份内容 —— 链路不断。
+  // 若在这里 process.exit(1)，CI 的这一步直接失败、后续步骤全部不跑，
+  // 等于「一个插件 403 就跳过整周刷新」。失败明细在 index.json 里，
+  // 由 workflow 最后的「Fail if any upstream resource is broken」步骤统一上报。
+  console.error(`⚠ ${failed} 个插件抓取失败（保留旧副本，链路继续）——明细见 index.json`);
 }

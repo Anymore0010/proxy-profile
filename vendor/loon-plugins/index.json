@@ -2,8 +2,8 @@
   "note": "kelee.one 的 Loon 插件原样副本。抓取需要 Loon 的 User-Agent（否则 Cloudflare 403）。",
   "source_config": "D:\\Projects\\loon2qx\\legacy\\loon\\2026_09_25_15_12_36_623_default.lcf",
   "count": 40,
-  "fetched": 12,
-  "skipped": 28,
+  "fetched": 0,
+  "skipped": 40,
   "failed": 0,
   "plugins": [
     {
@@ -294,7 +294,7 @@
       "file": "vendor/loon-plugins/Zhihu_remove_ads.lpx",
       "bytes": 4300,
       "sha256": "8bd1ee2062bc6a04bbbfa742c352e072b82c5cc061d9440cdfeab3fd82523e3d",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/CoolApk_remove_ads.lpx",
@@ -304,7 +304,7 @@
       "file": "vendor/loon-plugins/CoolApk_remove_ads.lpx",
       "bytes": 1979,
       "sha256": "fd68ff8683d29e0a66552f606d457659d0bde67989957d0b5de22febf51279bf",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx",
@@ -314,7 +314,7 @@
       "file": "vendor/loon-plugins/Bilibili_remove_ads.lpx",
       "bytes": 7355,
       "sha256": "671bde17557765c316bc695ad111780a0ad8b72a588bded860196dd263cda4d5",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Weibo_remove_ads.lpx",
@@ -324,7 +324,7 @@
       "file": "vendor/loon-plugins/Weibo_remove_ads.lpx",
       "bytes": 6405,
       "sha256": "e006118602d67562547453facd5840342dbbbd5fbde83d0a1448934ecfb72ffb",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/YouTube_remove_ads.lpx",
@@ -334,7 +334,7 @@
       "file": "vendor/loon-plugins/YouTube_remove_ads.lpx",
       "bytes": 2573,
       "sha256": "83485d8aeba184a1377e39c3866d7ea156d7aaf267ffcb3ab0c474ae4f757b9d",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Cainiao_remove_ads.lpx",
@@ -344,7 +344,7 @@
       "file": "vendor/loon-plugins/Cainiao_remove_ads.lpx",
       "bytes": 1595,
       "sha256": "a43b1ed6e372625af72818ebcc2f4f913c759544a984c2eac5647ab0d7601245",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/QuickSearch.lpx",
@@ -354,7 +354,7 @@
       "file": "vendor/loon-plugins/QuickSearch.lpx",
       "bytes": 1313,
       "sha256": "c81f9489b9da655888a080552980bdcd3de59d26ba9b7121d5fa0928d5bb26b1",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Prevent_DNS_Leaks.lpx",
@@ -364,7 +364,7 @@
       "file": "vendor/loon-plugins/Prevent_DNS_Leaks.lpx",
       "bytes": 1131,
       "sha256": "93caa3dd11230798c60edc7cb62311119880eeacd2b16028df5c9399b51023d1",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Node_detection_tool.lpx",
@@ -374,7 +374,7 @@
       "file": "vendor/loon-plugins/Node_detection_tool.lpx",
       "bytes": 1137,
       "sha256": "525123b6a3edf23a13ba65a4d8f970961c57819f88ec66379602df9b6a03cdc1",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/BoxJs.lpx",
@@ -384,7 +384,7 @@
       "file": "vendor/loon-plugins/BoxJs.lpx",
       "bytes": 762,
       "sha256": "1db7c447a8ad72e2f2c75e8a6a72122539ba3d46b912f4b0615c6ad4327fd4e3",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Sub-Store.lpx",
@@ -394,7 +394,7 @@
       "file": "vendor/loon-plugins/Sub-Store.lpx",
       "bytes": 1273,
       "sha256": "bcddfaf774f5253f8d4dea3eac9511a268295d4fa5d118cc4a78ae50115c86a8",
-      "source": "network"
+      "source": "cache"
     },
     {
       "url": "https://kelee.one/Tool/Loon/Lpx/Script-Hub.lpx",
@@ -404,7 +404,7 @@
       "file": "vendor/loon-plugins/Script-Hub.lpx",
       "bytes": 1644,
       "sha256": "253674248a8bc6fb6553cbd52132cd7484c103a7bbe78f45cd402f88135a785f",
-      "source": "network"
+      "source": "cache"
     }
   ]
 }
