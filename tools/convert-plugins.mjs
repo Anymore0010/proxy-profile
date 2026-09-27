@@ -638,8 +638,6 @@ const index = JSON.parse(readFileSync(join(VENDOR, "index.json"), "utf8"));
 mkdirSync(OUT_REWRITE, { recursive: true });
 mkdirSync(OUT_FILTER, { recursive: true });
 
-const claimedSigs = [];      // kelee 侧已产出的语义签名
-const claimedExact = new Map(); // kelee 侧已产出的整行
 const seeded = [];           // 参与比对的既有源（仅用于报告）
 // 「会改写响应体」的动作 —— 重复了才有真风险（reject 族重复是幂等的）。
 // echo-response 也必须算进来：两个插件对同一 URL 返回不同伪造 body 是真冲突
@@ -663,6 +661,26 @@ const written = new Set();
 const allHostnames = new Set();
 let deduped = 0;
 
+/**
+ * 产物合并：同一 App 被拆成多个 kelee 插件时（实为同一个上游项目的不同版本，
+ * 如 kokoryh `bilibili.lpx` 与 kelee `Bilibili_remove_ads.lpx`），
+ * 在**插件顺序内**合并成一份产物 —— 而不是让两份规则在 [rewrite_remote] 里重复处理同一响应体。
+ *
+ * 顺序即优先级：先出现的插件（Loon 的插件列表顺序）胜出，
+ * 后面的插件里与前者语义重复的规则被丢弃并记账。
+ * 注意只在**跨插件**判重；同一插件内同 URL 的多条规则是链式互补，全部保留。
+ */
+const mergedFilters = new Map();   // 产物名 -> { header, lines }（被合并插件的分流累加到这里）
+const mergedFilterSigs = new Map(); // 产物名 -> Set<归一化分流行>
+const mergedRewrites = new Map();  // 产物名 -> { header, lines, hosts }
+const mergePools = new Map();      // 产物名 -> 已产出规则（语义签名）
+const mergePatPools = new Map();  // 产物名 -> 已产出 URL 正则
+const mergeExactPools = new Map();// 产物名 -> 已产出整行
+const MERGE_INTO = new Map([
+  // 后者 -> 前者（保留的产物名）
+  ["Bilibili_remove_ads.lpx", "bilibili.lpx"],
+]);
+
 for (const p of index.plugins) {
   if (!p.file) continue;
   const text = readFileSync(join(ROOT, p.file), "utf8");
@@ -675,7 +693,10 @@ for (const p of index.plugins) {
     continue; // 不产出文件，避免"已生成但无人引用"的孤儿
   }
   const base = p.name.replace(/\.lpx$/, "");
-  const selfRel = `QuantumultX/rules/rewrite/kelee/${base}.snippet`;
+  // 该插件的规则最终写进哪个产物（被合并时写进「前者」的产物）
+  const mergeTarget = MERGE_INTO.get(p.name);
+  const targetBase = mergeTarget ? mergeTarget.replace(/\.lpx$/, "") : base;
+  const selfRel = `QuantumultX/rules/rewrite/kelee/${targetBase}.snippet`;
 
   const argDefaults = parseArgumentDefaults(text);
   const filters = [];
@@ -705,9 +726,24 @@ for (const p of index.plugins) {
     rewrites.push(r.line);
   }
 
-  // kelee 侧内部去重：同一 (正则, 动作) 只在**本插件集合内**判重，
-  // 与**其他源**的跨源去重已移交 tools/vendor-rules.mjs 的合并步骤
+  // kelee 侧内部去重，与**其他源**的跨源去重已移交 tools/vendor-rules.mjs 的合并步骤
   // （kelee 排第一个来源 = kelee 胜出，合并时按语义判据跳过后续重复）。
+  //
+  // ⚠ 去重作用域必须限定为「**跨插件**」：同一插件内同 URL 的多条规则往往是**链式互补**
+  // 的（Loon/QX 对同 URL 的多条 body 重写是顺序生效，作者刻意分开写）。实例：kelee 的
+  // smzdm 插件对 `app-api.smzdm.com/util/update$` 写了 3 条（json-replace → json-del →
+  // json-jq），全都必须保留。第一版把去重状态声明在插件循环之外、又用「同 URL 即重复」
+  // 判据，于是插件内第 2、3 条被自己的第 1 条顶掉 —— 静默功能损失。
+  const claimedLocalPat = new Set();          // 本插件内用：同 URL 只用于**报错提示**，不丢规则
+  // 跨插件/跨源去重池：按**产物**持有（被 MERGE_INTO 合并的插件共享同一个池子，
+  // 所以后一个插件里与前者重复的规则会在这里被丢掉）。
+  const mergeKey = targetBase;
+  const claimedCross = mergePools.get(mergeKey) ?? [];
+  const claimedCrossPat = mergePatPools.get(mergeKey) ?? new Map();
+  const claimedCrossExact = mergeExactPools.get(mergeKey) ?? new Map();
+  mergePools.set(mergeKey, claimedCross);
+  mergePatPools.set(mergeKey, claimedCrossPat);
+  mergeExactPools.set(mergeKey, claimedCrossExact);
   const kept = [];
   for (const r of rewrites) {
     const pat = r.split(/\s+(?:url|url-and-header)\s+/)[0];
@@ -717,18 +753,32 @@ for (const p of index.plugins) {
     }
     // 只在「会改写响应体」的动作上判重（reject 类重复幂等，可保留）。
     const sig = ruleSig(pat);
-    // 同一 URL 正则被两个插件产出、动作不同（如 kokoryh 与 kelee 都在拦 B 站同一批接口，
-    // 但返回的 body 不一样）—— 这是**真冲突**。Loon 按插件列表顺序先生效，
-    // 所以这里也按「先出现的插件胜出」，与 Loon 行为一致。
-    const samePat = claimedSigs.some((c) => c.pat === pat);
-    const dupInKelee = samePat || claimedSigs.some((c) => sameTarget(sig, c.sig)) || claimedExact.has(r);
-    if (dupInKelee) {
-      deduped++;
-      skip(p.name, "Rewrite", r, "与另一个 kelee 插件产出重复（保留先出现的那个）");
+    if (claimedLocalPat.has(pat)) {
+      // 同插件内同 URL 的补充规则：**保留**。Loon/QX 是同 URL 多条 body 重写顺序链式生效，
+      // 作者刻意分开写（如 smzdm 的 replace → del → jq 三段）。
+      notes.push({
+        plugin: p.name, kind: "同插件同URL多条（链式保留）",
+        detail: `${pat.slice(0, 70)} —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留`,
+      });
+      kept.push(r);
       continue;
     }
-    claimedSigs.push({ pat, sig, from: selfRel });
-    claimedExact.set(r, selfRel);
+    claimedLocalPat.add(pat);
+
+    // 跨插件：同一 URL 正则被两个插件产出、动作不同（如 kokoryh 与 kelee 都在拦 B 站
+    // 同一批接口但返回不同 body）—— **真冲突**。Loon 按插件列表顺序先生效，这里同序。
+    const samePat = claimedCrossPat.get(pat);
+    const sameSig = claimedCross.find((c) => sameTarget(sig, c.sig));
+    const sameExact = claimedCrossExact.get(r);
+    if (samePat || sameSig || sameExact) {
+      deduped++;
+      const who = samePat ?? sameSig?.from ?? sameExact;
+      skip(p.name, "Rewrite", r, `与另一个 kelee 插件产出重复（保留先出现的那个：${who}）`);
+      continue;
+    }
+    claimedCross.push({ pat, sig, from: selfRel });
+    claimedCrossPat.set(pat, selfRel);
+    claimedCrossExact.set(r, selfRel);
     kept.push(r);
   }
 
@@ -766,18 +816,51 @@ for (const p of index.plugins) {
     `# 源插件: ${p.url}`,
     "# 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs",
   ];
-  if (filters.length) {
-    writeIfChanged(join(OUT_FILTER, `${base}.list`), [...header, "", ...filters, ""].join("\n"));
-    written.add(`${base}.list`);
+  // 被 MERGE_INTO 指定的插件（作为「后者」）不单独产出文件：它的规则累加到「前者」的产物里。
+  // 这样 [rewrite_remote]/[filter_remote] 里只有一份条目，同一响应体不会被处理两次。
+  // 分流侧跨插件去重：同产物内 (type, value, policy) 完全相同的行只留一条。
+  const fKey = (l) => l.trim().toLowerCase();
+  const seenF = mergedFilterSigs.get(targetBase) ?? new Set();
+  mergedFilterSigs.set(targetBase, seenF);
+  const filtersDedup = [];
+  for (const f of filters) {
+    if (seenF.has(fKey(f))) continue;
+    seenF.add(fKey(f));
+    filtersDedup.push(f);
   }
-  if (localized.length) {
-    writeIfChanged(
-      join(OUT_REWRITE, `${base}.snippet`),
-      [...header, "", ...localized, "", `hostname = ${hosts.join(", ")}`, ""].join("\n"),
-    );
-    written.add(`${base}.snippet`);
+  const slotF = mergedFilters.get(targetBase) ?? { header: null, lines: [] };
+  const slotR = mergedRewrites.get(targetBase) ?? { header: null, lines: [], hosts: [] };
+  slotF.lines.push(...filtersDedup);
+  slotR.lines.push(...localized);
+  slotR.hosts.push(...hosts);
+  if (!slotF.header) slotF.header = header;
+  if (!slotR.header) slotR.header = header;
+  mergedFilters.set(targetBase, slotF);
+  mergedRewrites.set(targetBase, slotR);
+  if (mergeTarget) {
+    pluginReport.push({
+      plugin: p.name, name: nm, enabled: true, rules: filters.length, rewrites: localized.length,
+      hostnames: hosts.length, merged_into: `${targetBase}.snippet`,
+    });
+    continue;   // 不单独写文件
   }
   pluginReport.push({ plugin: p.name, name: nm, enabled: true, rules: filters.length, rewrites: localized.length, hostnames: hosts.length });
+}
+
+// 统一写出（含被合并插件的累加内容）—— 每个产物只出现一次。
+for (const [b, slot] of mergedFilters) {
+  if (!slot.lines.length) continue;
+  writeIfChanged(join(OUT_FILTER, `${b}.list`), [...slot.header, "", ...slot.lines, ""].join("\n"));
+  written.add(`${b}.list`);
+}
+for (const [b, slot] of mergedRewrites) {
+  if (!slot.lines.length) continue;
+  const uniqHosts = [...new Set(slot.hosts)];
+  writeIfChanged(
+    join(OUT_REWRITE, `${b}.snippet`),
+    [...slot.header, "", ...slot.lines, "", `hostname = ${uniqHosts.join(", ")}`, ""].join("\n"),
+  );
+  written.add(`${b}.snippet`);
 }
 
 // ---- 去重职责已移交 tools/vendor-rules.mjs 的合并步骤 ----

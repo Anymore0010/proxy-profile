@@ -21,5 +21,7 @@
 ^https:\/\/app\.bilibili\.com\/x\/v2\/account\/myinfo\? url jsonjq-response-body '.data.vip |= if . != null and .status == 0 then . + { status: 1, type: 2, due_date: 9005270400000, role: 15 } else . end'
 ^https:\/\/(grpc\.biliapi\.net|app\.bilibili\.com)\/bilibili\.community\.service\.dm\.v1\.DM\/DmSegMobile$ url script-request-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.request.js
 ^https:\/\/www\.bilibili\.com\/blackboard\/era\/.+\.html\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/kokoryh/Sparkle/refs/heads/master/dist/webpage.bilibili.js
+^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
+^https:\/\/api\.live\.bilibili\.com\/xlive\/e-commerce-interface\/v1\/ecommerce-user\/get_shopping_info\? url reject-dict
 
 hostname = grpc.biliapi.net, app.bilibili.com, api.bilibili.com, api.live.bilibili.com, www.bilibili.com, line3-h5-mobile-api.biligame.com

@@ -1,9 +1,0 @@
-# 哔哩哔哩去广告  —— 由 vendor/loon-plugins/Bilibili_remove_ads.lpx 自动转换（tools/convert-plugins.mjs）
-# 源插件: https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx
-# 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs
-
-host, bsbsb.top, proxy
-host, api.biliapi.com, reject
-host, app.biliapi.com, reject
-host, api.biliapi.net, reject
-host, app.biliapi.net, reject

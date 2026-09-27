@@ -8,7 +8,6 @@ host, sin3-ib.adnxs.com, reject
 host, sdkconfig.ad.xiaomi.com, reject
 host, data.mistat.xiaomi.com, reject
 host, tracking.intl.miui.com, reject
-host, sdkconfig.ad.xiaomi.com, reject
 host-suffix, doubleclick-cn.net, reject
 host-suffix, doubleclick.net, reject
 host, business.msstatic.com, reject

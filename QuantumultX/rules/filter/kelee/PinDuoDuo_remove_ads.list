@@ -5,7 +5,6 @@
 host, titan.pinduoduo.com, reject
 host, xg.pinduoduo.com, reject
 host, cdl-1.pddpic.com, reject
-host, titan.pinduoduo.com, reject
 host, cdl-p2.pddpic.com, reject
 host, cd-1.pddpic.com, reject
 host, apm.pinduoduo.com, reject

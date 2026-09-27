@@ -39,7 +39,6 @@ host-suffix, appsad.cn, reject
 host-suffix, beizi.biz, reject
 host-suffix, ad-scope.com.cn, reject
 host-suffix, adn-plus.com.cn, reject
-host-suffix, beizi.biz, reject
 host-suffix, adhub.com.cn, reject
 host-suffix, adnplus.com.cn, reject
 host-suffix, adscope.com.cn, reject
@@ -78,7 +77,6 @@ host, mobads.baidu.com, reject
 host, nadvideo2.baidu.com, reject
 host, wn.pos.baidu.com, reject
 host, miniapp-ad.cdn.bcebos.com, reject
-host, mobads-pre-config.cdn.bcebos.com, reject
 host, hm.baidu.com, reject
 host, dlswbr.baidu.com, reject
 host, miao.baidu.com, reject
@@ -107,7 +105,6 @@ host, tmeadcomm.y.qq.com, reject
 host, tpns.qq.com, reject
 host, wup.imtt.qq.com, reject
 host, tpstelemetry.tencent.com, reject
-host, otheve.beacon.qq.com, reject
 host, stat.y.qq.com, reject
 host, stat6.y.qq.com, reject
 host, oth.str.mdt.qq.com, reject
@@ -158,7 +155,6 @@ host-suffix, rhinokeen.com, reject
 host-suffix, lydaas.com, reject
 host-suffix, xixikf.com, reject
 host-suffix, wrating.com, reject
-host-suffix, puata.info, reject
 host-suffix, mobmore.com, reject
 host-suffix, um0.cn, reject
 host-suffix, umv0.com, reject
@@ -167,16 +163,11 @@ host-suffix, eshiqi.com, reject
 host-suffix, umv5.com, reject
 host-suffix, dratio.com, reject
 host-suffix, umtrack0.com, reject
-host-suffix, uyunad.com, reject
 host-suffix, whalecloud.com, reject
 host-suffix, umtrack2.com, reject
 host-suffix, umengcloud.com, reject
-host-suffix, umeng.com, reject
-host-suffix, umtrack.com, reject
 host-suffix, um1.cn, reject
-host-suffix, umsns.com, reject
 host-suffix, adfunlink.com, reject
-host-suffix, tianmu.mobi, reject
 host-suffix, ubixioe.com, reject
 host, ossgw.alicdn.com, reject
 host, ems.youku.com, reject
@@ -205,7 +196,6 @@ host, arms-retcode.aliyuncs.com, reject
 host-suffix, iytcdn.com, reject
 host, huichuan.sm.cn, reject
 host, huichuan-mc.sm.cn, reject
-host, api.sm.cn, reject
 host, nex.163.com, reject
 host, iad.g.163.com, reject
 host, gorgon.youdao.com, reject
@@ -240,10 +230,7 @@ host-suffix, lnk0.com, reject
 host-suffix, bridgeoos.com, reject
 host-suffix, anythinktech.com, reject
 host-suffix, birdgesdk.com, reject
-host-suffix, toponadss.com, reject
-host-suffix, bridgeoos.com, reject
 host-suffix, anyrtb.com, reject
-host-suffix, anythinktech.com, reject
 host-suffix, combocn.com, reject
 host-suffix, beanxin.com, reject
 host-suffix, letway.cn, reject
@@ -271,11 +258,9 @@ host-suffix, doubleclick-cn.net, reject
 host-suffix, googlesyndication.com, reject
 host-suffix, googlesyndication-cn.com, reject
 host-suffix, xinduoad.com, reject
-host-suffix, kuaiyiad.com, reject
 host, statis.miwuad.com, reject
 host-suffix, sigmob.cn, reject
 host-suffix, richmob.cn, reject
-host-suffix, 66mobi.com, reject
 host, ad.shunchangzhixing.com, reject
 host, redirect.shunchangzhixing.com, reject
 host, api.touch-moblie.com, reject
@@ -286,7 +271,6 @@ host-suffix, domob.cn, reject
 host-suffix, adwangmai.com, reject
 host-suffix, bxsnews.com, reject
 host-suffix, ranfenghd.com, reject
-host-suffix, miaozhen.com, reject
 host-suffix, qchannel01.cn, reject
 host-suffix, ad.xelements.cn, reject
 host-suffix, adsrvr.cn, reject

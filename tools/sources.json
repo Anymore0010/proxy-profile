@@ -384,17 +384,6 @@
       "note": "移植自 Loon 插件 Amap_remove_ads.lpx 的 [Rule] 段。"
     },
     {
-      "id": "filter-kelee-Bilibili_remove_ads",
-      "tag": "哔哩哔哩去广告(分流)",
-      "local_file": "QuantumultX/rules/filter/kelee/Bilibili_remove_ads.list",
-      "policy": null,
-      "parser": false,
-      "enabled": true,
-      "kelee_plugin": "Bilibili_remove_ads.lpx",
-      "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "移植自 Loon 插件 Bilibili_remove_ads.lpx 的 [Rule] 段。"
-    },
-    {
       "id": "filter-kelee-DragonRead_remove_ads",
       "tag": "番茄小说去广告(分流)",
       "local_file": "QuantumultX/rules/filter/kelee/DragonRead_remove_ads.list",
@@ -480,7 +469,7 @@
       "enabled": true,
       "kelee_plugin": "bilibili.lpx",
       "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "移植自 Loon 插件 bilibili.lpx 的 [Rule] 段。"
+      "note": "kokoryh Sparkle `bilibili.lpx` + kelee `Bilibili_remove_ads.lpx` **合并产物**。\n两个上游其实是同一个项目的不同版本，分属两个插件会让 QX 重复处理同一响应体，故在转换期合并（见 tools/convert-plugins.mjs 的 MERGE_INTO）。"
     },
     {
       "id": "filter-kelee-iQiYi_Video_remove_ads",
@@ -1009,17 +998,6 @@
       "note": "移植自 Loon 插件 Amap_remove_ads.lpx（kelee.one）。脚本已镜像到本仓库（kelee.one 对 QX 的 UA 返回 403）。"
     },
     {
-      "id": "rewrite-kelee-Bilibili_remove_ads",
-      "tag": "哔哩哔哩去广告",
-      "local_file": "QuantumultX/rules/rewrite/kelee/Bilibili_remove_ads.snippet",
-      "parser": false,
-      "enabled": true,
-      "kelee_plugin": "Bilibili_remove_ads.lpx",
-      "source_url": "https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx",
-      "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "移植自 Loon 插件 Bilibili_remove_ads.lpx（kelee.one）。脚本已镜像到本仓库（kelee.one 对 QX 的 UA 返回 403）。"
-    },
-    {
       "id": "rewrite-kelee-Weibo_remove_ads",
       "tag": "微博去广告",
       "local_file": "QuantumultX/rules/rewrite/kelee/Weibo_remove_ads.snippet",
@@ -1064,7 +1042,7 @@
       "parser": false,
       "enabled": true,
       "local_file": "QuantumultX/rules/rewrite/kelee/bilibili.snippet",
-      "note": "kokoryh Sparkle 的 bilibili.lpx 转换产物（分流的姊妹条目）。\n本轮补齐 Loon `response.json.*` / `body.mock` / `reject_dict()` 动作后首次产出重写规则。"
+      "note": "同分流侧：`bilibili.lpx` + `Bilibili_remove_ads.lpx` 合并产物（MERGE_INTO）。"
     }
   ],
   "tasks": [
