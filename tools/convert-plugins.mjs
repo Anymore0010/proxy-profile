@@ -318,6 +318,7 @@ function rewriteInToOr(expr) {
     const isIfCond = /^if\s+/.test(lhs);
     const bare = isIfCond ? lhs.replace(/^if\s+/, "") : lhs;
     const cmp = parts.map((a) => `${bare} == ${a}`).join(" or ");
+    // `if` 形态必须补上右括号：`if (A or B)`，否则 `then` 前缺 `)`
     const repl = isIfCond ? `if (${cmp})` : cmp;
     out = out.slice(0, s) + repl + out.slice(e + 1);
   }

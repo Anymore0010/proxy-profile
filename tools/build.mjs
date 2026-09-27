@@ -326,8 +326,14 @@ function buildMitm() {
   lines.push("");
   lines.push(comment("与 fmz 的 QuanX.conf、用户原 QX 配置保持一致（两边都显式设了 true）。"));
   lines.push("skip_validating_cert = true");
-  lines.push("passphrase = ");
-  lines.push("p12 = ");
+  // ⚠ 不写 `passphrase = ` / `p12 = ` 这两个**空值行**：
+  // 官方 sample.conf 里它们是**注释掉**的（`;passphrase =`）；写成不带注释的空值行，
+  // 等于显式声明「证书口令为空 / p12 为空」—— 可能覆盖本机在 QX 里生成的证书，
+  // 导致 **MITM 全部失效**（所有 ^https:// 重写静默不生效）。
+  // 这正是「同 URL 多条规则」「jsonjq 表达式」之外的另一条静默失效路径：
+  // 规则内容全都对，但 QX 根本没能解密流量。
+  lines.push(comment("不写 passphrase/p12 空值行：那会覆盖本机生成的证书（官方 sample.conf 是注释掉的）。"));
+  lines.push(comment("证书请在 QX 里生成并到「设置-通用-关于本机-证书信任设置」开启信任。"));
   return lines.join("\n");
 }
 
