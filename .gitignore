@@ -40,3 +40,5 @@ _check.py
 # ⚠ 路径必须与 tools/convert-plugins.mjs 的实际输出一致 —— 目录调整过两次
 # （rules/kelee → rules/rewrite/kelee），例外漏跟就会让报告静默不入库。
 !QuantumultX/rules/rewrite/kelee/_conversion-report.json
+
+temp/

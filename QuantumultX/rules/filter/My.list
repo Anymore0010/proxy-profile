@@ -1,14 +1,12 @@
-# 我的分流规则 —— 手工维护，排在 [filter_remote] 第 1 位（先匹配先赢，永远压过其它条目）
+# 我的分流规则 —— 手工维护，作为 AdsBlock.list / AdsBlockFull.list 的**第一个合并来源**
+# （先到者优先：这里写了 (type,value)，后面来源的同名规则被去重跳过，策略以这里为准）
 #
-# 用途：写你自己的放行/拦截决定。典型场景是「某条被广告大表误杀，我想放行」：
-#   这里写 direct，就能压过 AdsBlock 里的 reject —— 不用去改合并产物。
+# 用途：写你自己的放行/拦截决定。
+#   想放行被广告大表误杀的域名 → 写 direct
+#   想强制拦截 → 写 reject
 #
-# 语法：host, 域名, direct|reject|策略组名
-#       host-suffix, 域名, ...
-#       ip-cidr, 1.2.3.4/32, ...
-#
-# 下面两条是已知的 kelee 白名单与 AdsBlock 的冲突（kelee 要 direct、AdsBlock 要 reject）。
-# 先放在这里 = kelee 的 direct 生效。不想要就删掉这行，让 AdsBlock 的 reject 生效。
+# 语法：host, 域名, direct|reject|策略组名 / host-suffix, ... / ip-cidr, ...
 
-host, ad.12306.cn, direct
-host-suffix, cupid.iqiyi.com, direct
+# 2026-09-27 抓包（temp/308_*.har）确认后清空：
+# - ad.12306.cn / cupid.iqiyi.com 均为纯广告域，AdsBlock 与秋风规则已有 reject，
+#   kelee 的 direct 白名单不再保留。
