@@ -15,8 +15,10 @@
 ^https?:\/\/iface2\.iqiyi\.com\/ivos\/interact\/video\/data\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/video\/3\.0\/v_interface_proxy\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/views_pop\/3\.0\/pop_control\? url reject-dict
+^https?:\/\/comment-card\.iqiyi\.com\/views_comment\/3\.0\/long_video_comments\? url jsonjq-response-body '.cards |= map(select(has("alias_name")))'
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body 'del(.theme_list)'
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body '.cards |= map(.items |= map(select(.other.bottom_tab_type == "rec" or .other.bottom_tab_type == "my")))'
+^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/home_top_menu\? url jsonjq-response-body '.nav_group_data[].nav_list |= map(select(. == "0" or . == "2" or . == "1007" or . == "1" or . == "6" or . == "3"))'
 ^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'del(.content.resource.cast_device_ad)'
 ^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body '.content.switchs.app_ad.app_ad_enable = 0 | .content.switchs.app_ad.app_ad_duration = 0 | .content.switchs.ios_tech.kPreadAdHintSwitch = 0 | .content.switchs.ios_tech.ad_download = 0 | .content.switchs.m_qiyi_ios_tech.KFocusAdVideoPlayTimesIn4G = 0'
 ^https?:\/\/(kjp|t7z)\.cupid\.iqiyi\.com\/mixer\? url jsonjq-response-body 'del(.adSlots)'

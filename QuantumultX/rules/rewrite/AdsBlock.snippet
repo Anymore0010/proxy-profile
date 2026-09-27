@@ -7,7 +7,7 @@
 #   可莉广告过滤器（kelee 插件）  QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet
 #   AdvertisingLite（blackmatrix7，重写规则·新版）  https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf
 # 去重键: (URL正则, 动作)，忽略脚本 URL
-# 重写规则数: 2410
+# 重写规则数: 2409
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
@@ -65,7 +65,7 @@
 ################################################################
 # 第 3 块来源: 广告拦截合集（fmz）
 #   https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet
-#   本块贡献 1528 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 1527 条（与前面重复的已跳过，先到者优先）
 ################################################################
 ^https?:\/\/gab\.122\.gov\.cn\/eapp\/m\/sysquery\/adver$ url reject
 ^https?:\/\/api\.21jingji\.com\/ad\/ url reject
@@ -1495,7 +1495,6 @@ http:\/\/.+\.gamersky.com/.+/lists/getListElements url jsonjq-response-body '.li
 ^https?:\/\/portal\.zjzwfw\.gov\.cn\/app_api\/appHome\/selectStartPic url response-body "data":\{.+\} response-body "data":{}
 ^https?:\/\/apio\.zhengqi100\.com\/forum\/thread\/listsHome url reject-dict
 ^https?:\/\/app-izz\.zhengzhou\.gov\.cn:10019\/bizgw\/gateway\.do url response-body "imgUrl19_5x9":".+?" response-body "imgUrl19_5x9":""
-^https:\/\/api\.zhihu\.com\/(answers|articles)\/v2\/\d+ url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js
 ^https:\/\/api\.zhihu\.com\/commercial_api\/app_float_layer url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/zhihu/zhihu.js
 ^https:\/\/api\.zhihu\.com\/commercial_api\/(answer\/\d+\/bottom-v2|article\/\d+\/bottom-v2|banners_v3\/app_topstory_banner|launch_v2|real_time_launch_v2) url reject-dict
 ^https:\/\/api\.zhihu\.com\/content-distribution-core\/bubble\/common\/settings url reject-dict

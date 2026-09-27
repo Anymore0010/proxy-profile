@@ -768,7 +768,14 @@ for (const p of index.plugins) {
     // 跨插件：同一 URL 正则被两个插件产出、动作不同（如 kokoryh 与 kelee 都在拦 B 站
     // 同一批接口但返回不同 body）—— **真冲突**。Loon 按插件列表顺序先生效，这里同序。
     const samePat = claimedCrossPat.get(pat);
-    const sameSig = claimedCross.find((c) => sameTarget(sig, c.sig));
+    // ⚠ 必须排除「本插件自己产出的行」：sameTarget 在**同域同前缀的长路径**上会集体失明 ——
+    // 判据是「共同路径词元 ≥2」，而淘系接口的公共词（gw/mtop/taobao/idlehome）恒被算进来，
+    // 于是同插件内两条**不同** URL 被误判为同一目标并互相顶掉。实测损失：kelee
+    // FleaMarket_remove_ads 的 12 条闲鱼接口规则被它自己的第 1 条吃掉。
+    // 排除自身后剩下的才是真「跨插件重复」。
+    // 只与**别的插件**产出的行比语义。归属键必须是**插件名**：被 MERGE_INTO 合并的两个插件
+    // 算出的 selfRel 相同（同一个产物），用产物路径排除会把整个池子排除掉，等于关闭跨插件去重。
+    const sameSig = claimedCross.find((c) => c.plugin !== p.name && sameTarget(sig, c.sig));
     const sameExact = claimedCrossExact.get(r);
     if (samePat || sameSig || sameExact) {
       deduped++;
@@ -776,7 +783,7 @@ for (const p of index.plugins) {
       skip(p.name, "Rewrite", r, `与另一个 kelee 插件产出重复（保留先出现的那个：${who}）`);
       continue;
     }
-    claimedCross.push({ pat, sig, from: selfRel });
+    claimedCross.push({ pat, sig, plugin: p.name, from: selfRel });
     claimedCrossPat.set(pat, selfRel);
     claimedCrossExact.set(r, selfRel);
     kept.push(r);

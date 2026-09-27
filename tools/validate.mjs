@@ -424,6 +424,63 @@ function checkVendoredRules() {
  *
  * 检查范围：每一个已启用的重写源（上游的从 snapshot 读，本仓库自带的直接读）。
  */
+/**
+ * 反向断言：被转换器判为「重复」而丢弃的规则，其 URL 必须仍存在于**其它**产物里。
+ *
+ * 为什么需要它：转换器的跨插件去重会静默丢行。一旦判重判据过宽（实测：
+ * sameTarget 在「同域同前缀的长路径」上会集体失明 —— 淘系接口的公共词
+ * gw/mtop/taobao 恒被算作共同词元，导致 12 条闲鱼接口规则被同一插件的第 1 条吃掉），
+ * 丢掉的规则不会触发任何其它检查（产出的行本身合法、URL 也合法），
+ * 只有这条断言能发现「丢了但没人接住」。
+ */
+function checkDroppedRulesStillCovered() {
+  const repPath = join(ROOT, "QuantumultX", "rules", "rewrite", "kelee", "_conversion-report.json");
+  if (!existsSync(repPath)) return 0;
+  const rep = JSON.parse(readFileSync(repPath, "utf8"));
+  const dir = join(ROOT, "QuantumultX", "rules");
+  const prod = new Set();
+  for (const f of readdirSync(dir, { recursive: true }).map(String)) {
+    if (!/\.(snippet|list)$/.test(f)) continue;
+    for (const l of readFileSync(join(dir, f), "utf8").split(/\r?\n/)) {
+      const s = l.trim();
+      if (s && !s.startsWith("#") && s.includes(" url ")) prod.add(s.split(" url ")[0]);
+    }
+  }
+  // 语义级比对：把两侧正则里的**非捕获组/转义差异**归一后，再看任一产物是否覆盖同一目标。
+  // 只做字面比对会把「同一接口的不同写法」全部误报
+  // （实测：kokoryh 写 `^https://grpc.biliapi.net/...`，kelee 写 `^https:\/\/grpc\.biliapi\.net\/...`，
+  //  两者语义相同、字面不同 —— 5 条会被误报成丢失）。
+  const norm = (s) =>
+    s.replace(/\\\//g, "/")        // \/ -> /
+      .replace(/\\([.^$*+?()[\]{}|])/g, "$1") // 去掉转义
+      .replace(/\(\?:|\(/g, "(")      // (?: -> (
+      .replace(/^\^/, "").replace(/\$$/, "")
+      .replace(/[\s\/]+/g, "/")
+      .toLowerCase();
+  // 归一后「一个正则的核心片段被另一个包含」即视为覆盖（如 (?:grpc|app) 版包含 grpc 版）
+  const core = (s) => {
+    const parts = norm(s).split("/").filter((x) => x.length > 3 && !/^[().*+?[\]{}|]+$/.test(x));
+    return parts;
+  };
+  const prodCores = [...prod].map(core);
+  const coveredBy = (pat) => {
+    const c = core(pat);
+    if (!c.length) return true;
+    return prodCores.some((pc) => c.every((x) => pc.includes(x)));
+  };
+  let bad = 0;
+  for (const s of rep.skipped ?? []) {
+    if (!/重复/.test(s.reason)) continue;
+    const pat = s.line.split(" url ")[0].trim();
+    if (!pat) continue;
+    if (prod.has(pat) || coveredBy(pat)) continue;
+    err("_conversion-report.json", 0,
+      `规则被当「重复」丢弃，但没有任何产物覆盖该 URL —— 疑似静默丢失: ${pat.slice(0, 100)}`);
+    bad++;
+  }
+  return bad;
+}
+
 function checkRewriteDuplicates() {
   const src = JSON.parse(readFileSync(join(ROOT, "tools", "sources.json"), "utf8"));
 
@@ -595,6 +652,7 @@ const repoSlug = resolveRepoBase(ROOT).slug;
   const vendored = checkVendoredRules();
   if (vendored) console.log(`QuantumultX/rules  ${vendored.files} file(s), ${vendored.rules} rules`);
   const dupes = checkRewriteDuplicates();
+  const droppedUncovered = checkDroppedRulesStillCovered();
   console.log(`重写去重检查  跨源重复脚本重写: ${dupes}`);
   const hn = checkRewriteHostnames();
   console.log(`MITM 主机名检查  含脚本规则且自带 hostname 的文件: ${hn}`);

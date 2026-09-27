@@ -4,5 +4,10 @@
 
 ^https?:\/\/api\.spotify\.com\/v1\/tracks\? url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Spotify_response.js
 ^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/(.+)\?(.*)format=json url script-request-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Spotify_request.js
+^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/\w+\?(.*) url script-request-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Spotify_request.js
+^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/(.+)\?(.*)format=json(.*)subtype=Translate url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Translate_response.js
+^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/\w+\?(.*)subtype=Translate url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Translate_response.js
+^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/(.+)\?(.*)format=json(.*)subtype=External url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/External_Lyrics_response.js
+^https?:\/\/spclient\.wg\.spotify\.com\/color-lyrics\/v2\/track\/\w+\?(.*)subtype=External url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/External_Lyrics_response.js
 
 hostname = api.spotify.com, spclient.wg.spotify.com

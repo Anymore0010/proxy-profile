@@ -48,7 +48,7 @@
       "name": "哔哩哔哩增强",
       "enabled": true,
       "rules": 5,
-      "rewrites": 19,
+      "rewrites": 24,
       "hostnames": 6
     },
     {
@@ -72,7 +72,7 @@
       "name": "Spotify歌词增强",
       "enabled": true,
       "rules": 0,
-      "rewrites": 2,
+      "rewrites": 7,
       "hostnames": 2
     },
     {
@@ -104,7 +104,7 @@
       "name": "闲鱼去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 12,
+      "rewrites": 24,
       "hostnames": 2
     },
     {
@@ -160,7 +160,7 @@
       "name": "京东去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 3,
+      "rewrites": 4,
       "hostnames": 1
     },
     {
@@ -176,7 +176,7 @@
       "name": "爱奇艺去广告",
       "enabled": true,
       "rules": 6,
-      "rewrites": 20,
+      "rewrites": 22,
       "hostnames": 1
     },
     {
@@ -192,7 +192,7 @@
       "name": "高德地图去广告",
       "enabled": true,
       "rules": 3,
-      "rewrites": 25,
+      "rewrites": 30,
       "hostnames": 1
     },
     {
@@ -216,7 +216,7 @@
       "name": "小红书去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 18,
+      "rewrites": 21,
       "hostnames": 5
     },
     {
@@ -232,7 +232,7 @@
       "name": "知乎去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 24,
+      "rewrites": 26,
       "hostnames": 5
     },
     {
@@ -257,7 +257,7 @@
       "name": "微博去广告",
       "enabled": true,
       "rules": 3,
-      "rewrites": 35,
+      "rewrites": 38,
       "hostnames": 3
     },
     {
@@ -396,142 +396,10 @@
       "reason": "QX 分流无此类型（DEST-PORT）"
     },
     {
-      "plugin": "bilibili.lpx",
-      "section": "Rewrite",
-      "line": "^https://grpc\\.biliapi\\.net/bilibili\\.app\\.interface\\.v1\\.Search/DefaultWords$ url echo-response text/plain echo-response data:text/plain;charset=utf-8,AAAAACEaHeaQnOe0ouinhumikeOAgeeVquWJp%2BaIlnVw5Li7KAE%3D",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "bilibili.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/resource\\/show\\/tab\\/v2\\? url jsonjq-response-body '.data.tab = [ { pos: 1, id: 731, name: \"\\u76F4\\u64AD\", tab_id: \"\\u76F4\\u64ADtab\", uri: \"bilibili://live/home\" }, { pos: 2, id: 477, name: \"\\u63A8\\u8350\", tab_id: \"\\u63A8\\u8350tab\", uri: \"bilibili://pegasus/promo\", default_selected: 1 }, { pos: 3, id: 478, name: \"\\u70ED\\u95E8\", tab_id: \"\\u70ED\\u95E8tab\", uri: \"bilibili://pegasus/hottopic\" }, { pos: 4, id: 3502, name: \"\\u52A8\\u753B\", tab_id: \"bangumi\", uri: \"bilibili://pgc/bangumi_v2\" }, { pos: 5, id: 3503, name: \"\\u5F71\\u89C6\", tab_id: \"film\", uri: \"bilibili://pgc/cinema_v2\" } ] | .data.top = [ { pos: 1, id: 176, name: \"\\u6D88\\u606F\", tab_id: \"\\u6D88\\u606FTop\", uri: \"bilibili://link/im_home\", icon: \"http://i0.hdslb.com/bfs/archive/d43047538e72c9ed8fd8e4e34415fbe3a4f632cb.png\" } ] | .data.bottom = [ { pos: 1, id: 177, name: \"\\u9996\\u9875\", tab_id: \"home\", uri: \"bilibili://main/home/\", icon: \"http://i0.hdslb.com/bfs/archive/63d7ee88d471786c1af45af86e8cb7f607edf91b.png\", icon_selected: \"http://i0.hdslb.com/bfs/archive/e5106aa688dc729e7f0eafcbb80317feb54a43bd.png\" }, { pos: 2, id: 179, name: \"\\u52A8\\u6001\", tab_id: \"dynamic\", uri: \"bilibili://following/home/\", icon: \"http://i0.hdslb.com/bfs/archive/86dfbe5fa32f11a8588b9ae0fccb77d3c27cedf6.png\", icon_selected: \"http://i0.hdslb.com/bfs/archive/25b658e1f6b6da57eecba328556101dbdcb4b53f.png\" }, { pos: 5, id: 181, name: \"\\u6211\\u7684\", tab_id: \"\\u6211\\u7684Bottom\", uri: \"bilibili://user_center/\", icon: \"http://i0.hdslb.com/bfs/archive/4b0b2c49ffeb4f0c2e6a4cceebeef0aab1c53fe1.png\", icon_selected: \"http://i0.hdslb.com/bfs/archive/a54a8009116cb896e64ef14dcf50e5cade401e00.png\" } ]'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "bilibili.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/(grpc\\.biliapi\\.net|app\\.bilibili\\.com)\\/bilibili\\.(app\\.viewunite\\.v1\\.View\\/View|main\\.community\\.reply\\.v1\\.Reply\\/MainList)$ url script-request-body https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.request.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "bilibili.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/(app-interface\\/v2\\/index\\/feed|app-room\\/v1\\/index\\/getInfoBy(Room|User))\\? url script-response-body https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.json.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "bilibili.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/(grpc\\.biliapi\\.net|app\\.bilibili\\.com)\\/bilibili\\.(app\\.(show\\.v1\\.Popular\\/Index|dynamic\\.v2\\.Dynamic\\/DynAll|view(unite)?\\.v1\\.View\\/(View|ViewProgress|RelatesFeed|AIRelateAsync)|playurl\\.v1\\.PlayURL\\/PlayView|playerunite\\.v1\\.Player\\/PlayViewUnite)|polymer\\.app\\.search\\.v1\\.Search\\/SearchAll|community\\.service\\.dm\\.v1\\.DM\\/DmView|main\\.community\\.reply\\.v1\\.Reply\\/MainList|pgc\\.gateway\\.player\\.v2\\.PlayURL\\/PlayView)$ url script-response-body https://raw.githubusercontent.com/kokoryh/Sparkle/refs/heads/master/dist/bilibili.protobuf.response.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "Spotify_lyrics_translation.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/spclient\\.wg\\.spotify\\.com\\/color-lyrics\\/v2\\/track\\/\\w+\\?(.*) url script-request-body https://kelee.one/Resource/JavaScript/Spotify/Spotify_request.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Spotify_lyrics_translation.snippet）"
-    },
-    {
-      "plugin": "Spotify_lyrics_translation.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/spclient\\.wg\\.spotify\\.com\\/color-lyrics\\/v2\\/track\\/(.+)\\?(.*)format=json(.*)subtype=Translate url script-response-body https://kelee.one/Resource/JavaScript/Spotify/Translate_response.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Spotify_lyrics_translation.snippet）"
-    },
-    {
-      "plugin": "Spotify_lyrics_translation.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/spclient\\.wg\\.spotify\\.com\\/color-lyrics\\/v2\\/track\\/\\w+\\?(.*)subtype=Translate url script-response-body https://kelee.one/Resource/JavaScript/Spotify/Translate_response.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Spotify_lyrics_translation.snippet）"
-    },
-    {
-      "plugin": "Spotify_lyrics_translation.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/spclient\\.wg\\.spotify\\.com\\/color-lyrics\\/v2\\/track\\/(.+)\\?(.*)format=json(.*)subtype=External url script-response-body https://kelee.one/Resource/JavaScript/Spotify/External_Lyrics_response.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Spotify_lyrics_translation.snippet）"
-    },
-    {
-      "plugin": "Spotify_lyrics_translation.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/spclient\\.wg\\.spotify\\.com\\/color-lyrics\\/v2\\/track\\/\\w+\\?(.*)subtype=External url script-response-body https://kelee.one/Resource/JavaScript/Spotify/External_Lyrics_response.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Spotify_lyrics_translation.snippet）"
-    },
-    {
       "plugin": "PinDuoDuo_remove_ads.lpx",
       "section": "Rule",
       "line": "AND, ((DOMAIN, api.pinduoduo.com), (PROTOCOL, QUIC)), REJECT",
       "reason": "AND(...PROTOCOL QUIC) —— QX 无 PROTOCOL 条件；已由 [general] 的 udp_drop_list=443 覆盖"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.widget\\.refresh\\.get\\/ url jsonjq-response-body '.data.homeTopList |= map(select(.sectionType == \"kingkongDo\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.home\\.whale\\.modulet\\/ url jsonjq-response-body '.data.container.sections |= map(select(.template.name == \"fish_home_miniapp\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.fun\\.follow\\.feed\\.list\\/ url jsonjq-response-body '.data.sections|=map(select(.cardType==2001))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.home\\.community\\/ url jsonjq-response-body '.data.feedsList |= map(select(.template.name == \"idlefish_home_new_commodity_card\" or .template.name == \"idlefish_home_new_content_card\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.home\\.newitem\\.page\\/ url jsonjq-response-body '.data.sections |= map(select(.data.clickParam.args.cardType as $ct | $ct != \"banner\" and $ct != \"mamaAD\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.local\\.flow\\.plat\\.section\\/ url jsonjq-response-body '.data.data.components |= map(select(.data and (.data|type==\"object\") and .data.template and (.data.template|type==\"object\") and .data.template.name and (.data.template.name|type==\"string\") and (.data.template.name|contains(\"fish_city_kingkong\"))))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.local\\.home\\/ url jsonjq-response-body '.data.sections |= map(select((.template.cardEnum != \"ads\") and (.cardType == \"common\")))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.home\\.circle\\.list\\/ url jsonjq-response-body '.data.circleList[]?.showInfo |= del(.titleImage, .atmosphereImageUrl) | .data.next.headList |= map(select(.bizCode == \"main\" or .bizCode == \"market\" or .bizCode == \"IDLE_CIRCLE\")) | del(.data.next.headList[]?.showInfo.rightTagImage)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlehome\\.magic\\.home\\.page\\.list\\/ url jsonjq-response-body 'del(.data.topList)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlemtopsearch\\.search\\.discover\\/ url jsonjq-response-body '.data.resultList |= map(select(.type != \"MarketHotSpot\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlemtopsearch\\.item\\.search\\.activate\\/ url jsonjq-response-body '.data.cardList |= map(if has(\"cardData\") and (.cardData | has(\"hotwords\")) then .cardData |= del(.hotwords) else . end)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
-    },
-    {
-      "plugin": "FleaMarket_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idle\\.trade\\.full\\.info\\/ url jsonjq-response-body '.data.components |= map(select(.render | . == \"orderStatusVO\" or . == \"addressInfoVO\" or . == \"orderInfoVO\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/FleaMarket_remove_ads.snippet）"
     },
     {
       "plugin": "Spotify_remove_ads.lpx",
@@ -540,94 +408,16 @@
       "reason": "AND(...PROTOCOL QUIC) —— QX 无 PROTOCOL 条件；已由 [general] 的 udp_drop_list=443 覆盖"
     },
     {
-      "plugin": "JD_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.m\\.jd\\.com\\/client\\.action\\?functionId=(deliverLayer|getTabHomeInfo|myOrderInfo|orderTrackBusiness|personinfoBusiness|start|welcomeHome) url script-response-body https://kelee.one/Resource/JavaScript/JD/JD_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/JD_remove_ads.snippet）"
-    },
-    {
       "plugin": "Tencent_Video_remove_ads.lpx",
       "section": "Rewrite",
       "line": "^https?:\\/\\/vv\\.video\\.qq\\.com\\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js",
       "reason": "脚本镜像失败、已丢弃（避免留下必然失效的直链）: https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js"
     },
     {
-      "plugin": "iQiYi_Video_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/comment-card\\.iqiyi\\.com\\/views_comment\\/3\\.0\\/long_video_comments\\? url jsonjq-response-body '.cards |= map(select(has(\"alias_name\")))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/iQiYi_Video_remove_ads.snippet）"
-    },
-    {
-      "plugin": "iQiYi_Video_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https?:\\/\\/iface2\\.iqiyi\\.com\\/views_menus\\/3\\.0\\/home_top_menu\\? url jsonjq-response-body '.nav_group_data[].nav_list |= map(select(. == \"0\" or . == \"2\" or . == \"1007\" or . == \"1\" or . == \"6\" or . == \"3\"))'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/iQiYi_Video_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Amap_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/search_poi\\/homepage\\? url jsonjq-response-body 'del(.history_tags)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Amap_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Amap_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/search_bff\\/hotword\\? url script-response-body https://kelee.one/Resource/JavaScript/Amap/Amap_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Amap_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Amap_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/search_poi\\/(?:mps|search\\/sp|sug|tips_operation_location) url script-response-body https://kelee.one/Resource/JavaScript/Amap/Amap_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Amap_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Amap_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/m5\\.amap\\.com\\/ws\\/shield\\/search\\/nearbyrec_smart\\? url script-response-body https://kelee.one/Resource/JavaScript/Amap/Amap_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Amap_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Amap_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/(?:info|m5)\\.amap\\.com\\/ws\\/shield\\/search\\/(?:common\\/coupon\\/info|poi\\/detail) url script-response-body https://kelee.one/Resource/JavaScript/Amap/Amap_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Amap_remove_ads.snippet）"
-    },
-    {
       "plugin": "RedPaper_remove_ads.lpx",
       "section": "Rule",
       "line": "AND, ((PROTOCOL, QUIC), (DOMAIN-SUFFIX, xiaohongshu.com)), REJECT",
       "reason": "AND(...PROTOCOL QUIC) —— QX 无 PROTOCOL 条件；已由 [general] 的 udp_drop_list=443 覆盖"
-    },
-    {
-      "plugin": "RedPaper_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/edith\\.xiaohongshu\\.com\\/api\\/sns\\/v1\\/system_service\\/config\\? url script-response-body https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/RedPaper_remove_ads.snippet）"
-    },
-    {
-      "plugin": "RedPaper_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/edith\\.xiaohongshu\\.com\\/api\\/sns\\/v2\\/system_service\\/splash_config url script-response-body https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/RedPaper_remove_ads.snippet）"
-    },
-    {
-      "plugin": "RedPaper_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/(?:edith|rec|www)\\.xiaohongshu\\.com\\/api\\/sns\\/(?:v4\\/note\\/videofeed|v10\\/note\\/video\\/save) url script-response-body https://kelee.one/Resource/JavaScript/RedPaper/RedPaper_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/RedPaper_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Zhihu_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.zhihu\\.com\\/(articles|answers|pins)\\/v\\d\\/\\d+\\? url jsonjq-response-body 'del(.third_business, .ring_info, .interaction_bar_plugins)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Zhihu_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Zhihu_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.zhihu\\.com\\/comment_v\\d\\/answers\\/\\d+\\/list-headers$ url jsonjq-response-body 'del(.continuous_consumption_module)'",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Zhihu_remove_ads.snippet）"
     },
     {
       "plugin": "Bilibili_remove_ads.lpx",
@@ -766,24 +556,6 @@
       "section": "Rewrite",
       "line": "^https:\\/\\/api\\.live\\.bilibili\\.com\\/xlive\\/(?:app-interface\\/v2\\/index\\/feed|app-room\\/v1\\/index\\/getInfoBy(?:Room|User))\\? url script-response-body https://kelee.one/Resource/JavaScript/Bilibili/Bilibili_json_kokoryh.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
-    },
-    {
-      "plugin": "Weibo_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.weibo\\.cn\\/2\\/statuses\\/(?:comments_expand_child|container_detail_comment) url script-response-body https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Weibo_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Weibo_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.weibo\\.cn\\/2\\/statuses\\/(?:container_detail\\?|container_timeline(?:_hot|_topic|_topicpage|_unread)?|repost_timeline|unread_hot_timeline) url script-response-body https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Weibo_remove_ads.snippet）"
-    },
-    {
-      "plugin": "Weibo_remove_ads.lpx",
-      "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.weibo\\.cn\\/2\\/search\\/(?:container_timeline|finder)\\? url script-response-body https://kelee.one/Resource/JavaScript/Weibo/Weibo_remove_ads.js",
-      "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/Weibo_remove_ads.snippet）"
     },
     {
       "plugin": "Node_detection_tool.lpx",
