@@ -406,7 +406,10 @@ function checkVendoredRules() {
     }
     // 纯重写文件（如京东比价）只有 url 规则 + hostname，没有分流规则，属正常。
     const hasRewrite = lines.some((l) => /\surl(?:-and-header)?\s+\S/.test(l));
-    if (count === 0 && !hasRewrite) err(rel, 0, "vendored 文件既无分流规则也无重写规则");
+    // My.list / My.snippet 是用户的**个人合并来源**，允许暂时为空（只放注释），
+    // 空了照样作为 merges[0] 参与合并 —— 不算错误。
+    const isPersonal = /(^|\/)My\.(list|snippet)$/.test(rel);
+    if (count === 0 && !hasRewrite && !isPersonal) err(rel, 0, "vendored 文件既无分流规则也无重写规则");
     total += count;
   }
   return { files: files.length, rules: total };
