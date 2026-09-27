@@ -124,7 +124,7 @@
       "name": "夸克去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 10,
+      "rewrites": 3,
       "hostnames": 2
     },
     {
@@ -659,43 +659,8 @@
     },
     {
       "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "超长 jq 表达式已拆分",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— 703 个路径的单个 del(...) 过长，拆成 8 条同 URL 规则（QX 是同 URL 多条 body 重写顺序生效，语义等价）"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "QuarkBrowser_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "超长 jq 表达式改用脚本",
+      "detail": "^https:\\/\\/open-cms-api\\.quark\\.cn\\/open-cms\\? —— 703 个路径的 del(...) 超出 QX 单行上限，改用一条 script-response-body（脚本里按段删除；不拆多条同 URL 规则，因为同 URL 多条 body 重写的执行顺序不可预期）"
     },
     {
       "plugin": "Spotify_remove_ads.lpx",

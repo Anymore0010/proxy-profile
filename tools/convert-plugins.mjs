@@ -144,14 +144,65 @@ const jsonDelToJq = (paths) => `'del(${paths.map(jqPath).join(", ")})'`;
  */
 const JQ_PATHS_PER_RULE = 100;
 
-/** 把超长的 del(...) 拆成多条（每条 ≤ JQ_PATHS_PER_RULE 个路径）。 */
-function splitJsonDel(paths) {
-  if (paths.length <= JQ_PATHS_PER_RULE) return [jsonDelToJq(paths)];
+/** 路径 token（`result.a.b` / `result["a-b"]`）-> 段数组，供生成的脚本按段删除。 */
+function pathSegments(token) {
   const out = [];
-  for (let i = 0; i < paths.length; i += JQ_PATHS_PER_RULE) {
-    out.push(jsonDelToJq(paths.slice(i, i + JQ_PATHS_PER_RULE)));
-  }
+  const re = /\.([A-Za-z_$][\w$]*)|\["((?:[^"\\]|\\.)*)"\]|\[(\d+)\]/g;
+  let m;
+  let s = token.startsWith(".") ? token : `.${token}`;
+  re.lastIndex = 0;
+  while ((m = re.exec(s))) out.push(m[1] ?? JSON.parse(`"${m[2]}"`) ?? Number(m[3]));
   return out;
+}
+
+/**
+ * 删除脚本源码：`$response.body` 里按段删除给定路径。
+ *
+ * 为什么不拆成多条同 URL 的 jsonjq 规则：本仓库 validate 的注释与实测都指出，
+ * **同 URL 的多条 body 重写「先后各跑一次」的结果不可预期**（甚至后者永不执行）——
+ * 拆开等于赌 QX 会全部执行。而单条 27161 字符的 jsonjq 已被证明超出 QX 单行上限。
+ * 所以改走「一条 script-response-body + 镜像脚本」，与 mock 脚本同一套机制（已验证可行）。
+ */
+function jsonDelScriptSource(paths) {
+  const rows = paths.map((p) => JSON.stringify(pathSegments(p))).join(",\n  ");
+  return [
+    "// 由 tools/convert-plugins.mjs 生成：删除响应体里的指定路径（替代超长的 jsonjq del(...)）。",
+    "// 来源：Loon 插件的 response-body-json-del 动作。",
+    "const PATHS = [",
+    `  ${rows},`,
+    "];",
+    "function isObj(v) { return v !== null && typeof v === 'object'; }",
+    "function delPath(root, segs) {",
+    "  let cur = root;",
+    "  for (let i = 0; i < segs.length - 1; i++) {",
+    "    if (!isObj(cur)) return;",
+    "    cur = cur[segs[i]];",
+    "  }",
+    "  if (!isObj(cur)) return;",
+    "  const last = segs[segs.length - 1];",
+    "  if (Array.isArray(cur)) { const n = Number(last); if (!Number.isNaN(n)) cur.splice(n, 1); }",
+    "  else delete cur[last];",
+    "}",
+    "try {",
+    "  const obj = JSON.parse($response.body);",
+    "  for (const p of PATHS) delPath(obj, p);",
+    "  $done({ body: JSON.stringify(obj) });",
+    "} catch (e) { $done({}); }",
+    "",
+  ].join("\n");
+}
+
+/** 把路径表落成脚本并返回 `script-response-body <URL>`，与 mock 脚本共用确定性命名。 */
+function materializeScript(pattern, source) {
+  const hash = createHash("sha1").update(pattern + "\u0000" + source).digest("hex").slice(0, 12);
+  const rel = `QuantumultX/rules/rewrite/kelee/mock/${hash}.js`;
+  const abs = join(ROOT, rel);
+  if (!CHECK) {
+    mkdirSync(dirname(abs), { recursive: true });
+    if (!existsSync(abs) || readFileSync(abs, "utf8") !== source) writeFileSync(abs, source);
+  }
+  usedMocks.add(rel);
+  return `${pattern} url script-response-body ${repoBase}/${rel}`;
 }
 
 function echoScriptSource(bodyLiteral, isBinary) {
@@ -285,16 +336,18 @@ async function convertRewrite(line, plugin) {
   if (a === "response-body-json-del") {
     const paths = rest.trim().split(/\s+/).filter(Boolean);
     if (!paths.length) return skip(plugin, "Rewrite", line, "response-body-json-del 无路径参数"), null;
-    const exprs = splitJsonDel(paths);
-    if (exprs.length > 1) {
+    // 短表达式用 QX 原生的 jsonjq（无脚本依赖、更快）；
+    // 超长的改用一条 script-response-body —— 见 jsonDelScriptSource 的说明。
+    if (paths.length > JQ_PATHS_PER_RULE) {
       notes.push({
-        plugin, kind: "超长 jq 表达式已拆分",
-        detail: `${pattern.slice(0, 60)} —— ${paths.length} 个路径的单个 del(...) 过长，`
-          + `拆成 ${exprs.length} 条同 URL 规则（QX 是同 URL 多条 body 重写顺序生效，语义等价）`,
+        plugin, kind: "超长 jq 表达式改用脚本",
+        detail: `${pattern.slice(0, 60)} —— ${paths.length} 个路径的 del(...) 超出 QX 单行上限，`
+          + `改用一条 script-response-body（脚本里按段删除；不拆多条同 URL 规则，`
+          + `因为同 URL 多条 body 重写的执行顺序不可预期）`,
       });
+      return materializeScript(pattern, jsonDelScriptSource(paths));
     }
-    // 多行返回：调用方按数组展开
-    return exprs.map((e) => `${pattern} url jsonjq-response-body ${e}`);
+    return `${pattern} url jsonjq-response-body ${jsonDelToJq(paths)}`;
   }
   if (a === "response-body-json-replace") {
     const toks = rest.trim().split(/\s+/).filter(Boolean);

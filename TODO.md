@@ -34,6 +34,14 @@
 - [ ] **`binary-body-mode` 脚本（10 条）**：QX 侧能否解包 protobuf 未经设备验证。
 - [ ] **插件参数面板（7 条）**：Loon `[Argument]` 的用户可调参数 QX 无机制，只有默认值内联。
 
+### 已修（本轮）
+
+- [x] **超长 jq 表达式（夸克 27161 字符）**：QY 的 rewrite 是单行解析，野生 QX 资源的
+  最长规则行是 403 字符 —— 超两个数量级会被判「第一行不合法」。
+  已改为生成一条 `script-response-body`（脚本里按段删除 703 个路径），
+  **不拆成多条同 URL 规则**（本仓库 validate 已记录：同 URL 多条 body 重写的
+  执行顺序不可预期，拆开等于赌 QX 会全跑）。
+
 ### 维护注意事项
 
 - [ ] 修改 `rules/rewrite/kelee/*.snippet` / `rules/filter/kelee/*.list` **无效**：
