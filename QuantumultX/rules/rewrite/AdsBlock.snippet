@@ -11,8 +11,8 @@
 # 重新生成: bun tools/vendor-rules.mjs
 
 ################################################################
-# 第 1 块来源: 内联手写规则（raw_rewrite）
-#   
+# 第 1 块来源: 我的重写（手工维护，永远优先）
+#   QuantumultX/rules/rewrite/My.snippet
 #   本块贡献 41 条（与前面重复的已跳过，先到者优先）
 ################################################################
 ^https:\/\/line3-h5-mobile-api\.biligame\.com\/game\/live\/large_card_material\? url reject-dict
@@ -57,13 +57,13 @@
 ^https:\/\/www\.coolapk\.com\/link.* url script-request-header https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/VenenoSix24/Ivy-Script/refs/heads/main/Loon/script/Coolapk_Redirect.js
 ^https?:\/\/api\.gotokeep\.com\/config\/v\d\/basic url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/github.com/fmz200/wool_scripts/main/Scripts/keep.js
 ################################################################
-# 第 3 块来源: 广告平台拦截器（kelee 插件，优先）
+# 第 2 块来源: 广告平台拦截器（kelee 插件，优先）
 #   QuantumultX/rules/rewrite/kelee/BlockAdvertisers.snippet
 #   本块贡献 1 条（与前面重复的已跳过，先到者优先）
 ################################################################
 ^https:\/\/t-dsp\.pinduoduo\.com\/dspcb\/i\/mrk_ url reject
 ################################################################
-# 第 4 块来源: 广告拦截合集（fmz）
+# 第 3 块来源: 广告拦截合集（fmz）
 #   https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/rewrite/rewrite.snippet
 #   本块贡献 1528 条（与前面重复的已跳过，先到者优先）
 ################################################################
@@ -1596,7 +1596,7 @@ http:\/\/.+\.gamersky.com/.+/lists/getListElements url jsonjq-response-body '.li
 ^https?:\/\/adapi\.izuiyou\.com\/ url reject
 ^https?:\/\/(syh|www)\.zybang\.com\/adx\/ url reject-200
 ################################################################
-# 第 5 块来源: 广告拦截(通用)（blackmatrix7）
+# 第 4 块来源: 广告拦截(通用)（blackmatrix7）
 #   https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/Advertising/Advertising.conf
 #   本块贡献 619 条（与前面重复的已跳过，先到者优先）
 ################################################################
@@ -2220,7 +2220,7 @@ http:\/\/.+\.gamersky.com/.+/lists/getListElements url jsonjq-response-body '.li
 ^https?:\/\/ztoread\.ziroom\.com\/ymerApi\/v\d\/index\/open url reject-200
 https://dynamicad.kfc.com.cn/api/app5/homepage/ai/popup url reject-200
 ################################################################
-# 第 6 块来源: 可莉广告过滤器（kelee 插件）
+# 第 5 块来源: 可莉广告过滤器（kelee 插件）
 #   QuantumultX/rules/rewrite/kelee/Remove_ads_by_keli.snippet
 #   本块贡献 66 条（与前面重复的已跳过，先到者优先）
 ################################################################
@@ -2291,7 +2291,7 @@ https://dynamicad.kfc.com.cn/api/app5/homepage/ai/popup url reject-200
 ^https:\/\/d\.socdm\.com\/adsv\/ url reject-dict
 ^https?:\/\/api\.fenxianglife\.com\/njia\/index\/popup\/v2 url jsonjq-response-body '.data.list=[]'
 ################################################################
-# 第 7 块来源: AdvertisingLite（blackmatrix7，重写规则·新版）
+# 第 6 块来源: AdvertisingLite（blackmatrix7，重写规则·新版）
 #   https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rewrite/QuantumultX/AdvertisingLite/AdvertisingLite.conf
 #   本块贡献 153 条（与前面重复的已跳过，先到者优先）
 ################################################################
