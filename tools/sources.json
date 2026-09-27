@@ -462,14 +462,14 @@
     },
     {
       "id": "filter-kelee-bilibili",
-      "tag": "哔哩哔哩增强(分流)",
+      "tag": "哔哩哔哩(分流)",
       "local_file": "QuantumultX/rules/filter/kelee/bilibili.list",
       "policy": null,
       "parser": false,
       "enabled": true,
       "kelee_plugin": "bilibili.lpx",
       "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "kokoryh Sparkle `bilibili.lpx` + kelee `Bilibili_remove_ads.lpx` **合并产物（kelee 版胜出）**。\n两个上游其实是同一个项目的不同版本，分属两个插件会让 QX 重复处理同一响应体，故在转换期合并（见 tools/convert-plugins.mjs 的 MERGE_GROUPS）。"
+      "note": "哔哩哔哩合并产物（分流）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者）+ kokoryh 自建 `bilibili.lpx`（补充）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**，kokoryh 独有的补充规则仍然保留。\n合并规则见 tools/convert-plugins.mjs 的 MERGE_GROUPS（plugins[0] = 胜出者）。"
     },
     {
       "id": "filter-kelee-iQiYi_Video_remove_ads",
@@ -1038,11 +1038,11 @@
     },
     {
       "id": "rewrite-kelee-bilibili",
-      "tag": "哔哩哔哩增强(重写)",
+      "tag": "哔哩哔哩(重写)",
       "parser": false,
       "enabled": true,
       "local_file": "QuantumultX/rules/rewrite/kelee/bilibili.snippet",
-      "note": "同分流侧：`bilibili.lpx` + `Bilibili_remove_ads.lpx` 合并产物（MERGE_INTO）。"
+      "note": "哔哩哔哩合并产物（重写）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者，21 条）+ kokoryh 自建 `bilibili.lpx`（独有补充 5 条）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**。\n`_conversion-report.json` 的 merge_role 字段标明谁是胜出者、谁被合并。"
     }
   ],
   "tasks": [

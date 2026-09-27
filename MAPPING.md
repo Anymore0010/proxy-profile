@@ -23,7 +23,7 @@
 下面这些曾被我记成「QX 无此语法」，核对官方 sample.conf 后确认 **QX 都有等价物**，
 只是转换器（当时）没写：`mock-response-body` → `echo-response`、
 `response-body-replace-regex` → `url response-body <re> response-body <repl>`、
-`header <url>`（重定向）→ `url 302`、`if ${url} ~= /re/ then …` → 条件本身就是 URL 正则、
+~~`header <url>`~~（语义待核实，保守放弃）、`if ${url} ~= /re/ then …` → 条件本身就是 URL 正则、
 `generic` 菜单脚本 → `[task_local]` 的 `event-interaction`。
 **真正**无等价物的只有：`AND/OR/NOT` 逻辑组合分流、`DEST-PORT`、`PROTOCOL QUIC` 条件、
 `response-header-add`（需 `script-response-header` 小脚本）。以下是逐条对照。

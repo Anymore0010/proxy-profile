@@ -69,7 +69,7 @@ Loon 和 Quantumult X 的差异不在语法，而在**功能承载方式**：
 
 - `mock-response-body` → `echo-response`（含 base64 → `data:…;base64,`）
 - `response-body-replace-regex` → `url response-body <re> response-body <repl>`
-- `header <url>`（Loon 的重定向动作）→ `url 302 <url>`
+- ~~`header <url>`~~ —— 语义待核实（resource-parser 归为 302/307，Script-Hub 反而原样保留），未设备验证前**不猜迁移**
 - `request/response if ${url} ~= /re/ then …` → 条件本身就是 URL 正则，直接当 pattern
 - `response.json.jq` / `.json.delete` / `.json.jq_file` / `body.mock` / `reject_dict(200)` → `jsonjq-response-body` / `echo-response` / `reject-dict`
 - 脚本镜像失败时**整条丢弃**（绝不回退成上游直链）：`CommonScript/replace-body.js` 已 404（1 条）

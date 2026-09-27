@@ -7,7 +7,7 @@
 
 | 上游来源 | 转换后文件 | 规则数 | 丢弃 |
 |---|---|---|---|
-| https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list | — | **抓取失败**：The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch() | — |
+| https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list | `QuantumultX/rules/filter/AWAvenue.list` | 965 | 0 |
 | https://raw.githubusercontent.com/ddgksf2013/Filter/refs/heads/master/AppleIntelligence.list | `QuantumultX/rules/filter/AppleIntelligence.list` | 11 | 0 |
 | QuantumultX/rules/filter/My.list + QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/AdvertisingLite/AdvertisingLite.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list | `QuantumultX/rules/filter/AdsBlock.list` | 40025 | 0 |
 | QuantumultX/rules/filter/My.list + QuantumultX/rules/filter/kelee/BlockAdvertisers.list + https://raw.githubusercontent.com/fmz200/wool_scripts/main/QuantumultX/filter/filter.list + https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/QuantumultX/Advertising/Advertising.list + QuantumultX/rules/filter/AWAvenue.list + QuantumultX/rules/filter/kelee/Remove_ads_by_keli.list | `QuantumultX/rules/filter/AdsBlockFull.list` | 288199 | 0 |

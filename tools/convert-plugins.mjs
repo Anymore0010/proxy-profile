@@ -17,6 +17,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, statSync, rmSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import { ruleSig, sameTarget } from "./lib/rule-target.mjs";
 import { resolveRepoBase } from "./repo-url.mjs";
 
@@ -116,6 +117,29 @@ const stripQuotes = (s) => s.trim().replace(/^["']|["']$/g, "");
 const jsonDelToJq = (paths) => `'del(${paths.map((p) => `.${p}`).join(", ")})'`;
 
 /** 按顶层逗号切参数（忽略引号/反引号/括号内的逗号）。 */
+/**
+ * QX `echo-response` 的正文必须是**本机 Data 目录里的文件名**，不接受 URL / data: URI /
+ * 内联内容 —— 凡带 scheme 的一律被判无效（KOP-XIAO resource-parser.js:3609-3614 原文：
+ * 「echo-response 需要本机 Data 目录中的正文文件，不能直接引用 URL/URI」；
+ * 官方 sample.conf：「the body file should be saved at "On My iPhone - Quantumult X - Data"」）。
+ * 远程配置**投递不了本机文件**，所以这类规则写出来等于没写（静默失效）。
+ *
+ * 因此改走 `script-echo-response <本仓库镜像脚本URL>`：脚本里 `$done({body: …})` 返回固定
+ * body。脚本经 URL 引用在 QX 是可行的（kelee 脚本管线已跑通），body 文件则不行。
+ *
+ * 生成物落在 QuantumultX/rules/rewrite/kelee/mock/<slug>.js，由调用方镜像进仓库。
+ */
+function echoScriptSource(bodyJsLiteral, isBinary) {
+  return [
+    "// 由 tools/convert-plugins.mjs 生成：为 QX `script-echo-response` 返回固定 body。",
+    "// 不能改用 `echo-response` —— 那个动作的正文只接受本机 Data 目录里的文件，远程配置投递不了。",
+    "// 来源：Loon 插件的 mock-response-body / response.body.mock(...) 动作。",
+    "const body = " + bodyJsLiteral + ";",
+    "if (typeof $done === 'function') { $done({ body: body }); }",
+    "",
+  ].join("\n");
+}
+
 function splitArgs(s) {
   const out = [];
   let depth = 0, cur = "", q = null;
@@ -274,9 +298,7 @@ async function convertRewrite(line, plugin) {
       const kindName = stripQ(parts[0] ?? "text").toLowerCase();
       const payload = (parts[1] ?? "").trim().replace(/^`|`$/g, "").replace(/^"|"$/g, "");
       if (!payload) return skip(plugin, "Rewrite", line, "body.mock 无 payload"), null;
-      const mime = kindName === "json" ? "application/json" : "text/plain";
-      const enc = encodeURIComponent(payload);
-      return `${dpat} url echo-response ${mime} echo-response data:${mime};charset=utf-8,${enc}`;
+      return { needsEchoScript: true, pattern: dpat, source: echoScriptSource(JSON.stringify(payload), false) };
     }
     if (kind === "header.set") {
       // QX 没有「直接改响应头」的行内动作，但 `script-response-header` 可以做 —— 需脚本。
@@ -286,13 +308,19 @@ async function convertRewrite(line, plugin) {
 
   // ---------- 以下四类原先被记成「QX 无对应动作名」，实际都有等价物 ----------
 
-  // `header <url>`：Loon 的**重定向**动作（不是改 HTTP 头）。
-  // 权威依据：KOP-XIAO resource-parser.js 的 `subs[i].split(" ")[2] == "header"` 分支
-  // 把它与 302/307 归在同一类，产出 `url 302 <url>`。
+  // `header <url>`：**语义未证实**。两种证据互相冲突：
+  //   ① KOP-XIAO resource-parser.js 的 `subs[i].split(" ")[2] == "header"` 分支
+  //      把它归入重定向类、产出 `url 302 <url>`（本转换器原先照此实现）。
+  //   ② Script-Hub 的 Rewrite-Parser 把它归入 rw_redirect 但**不转 302** ——
+  //      对 Stash 映射成 `transparent`，对 Loon 原样保留 `header`，
+  //      说明它是独立动作，语义与 302（响应重定向，客户端会看到新 URL）不同。
+  // 无设备验证前不猜：按源插件的本意（改请求头/重定向）**保守放弃并如实记账**，
+  // 而不是写一条语义可能不对的 302。要恢复就取消下面这行 skip、改用 302。
   if (a === "header") {
-    const target = rest.trim();
-    if (!target) return skip(plugin, "Rewrite", line, "header 无目标 URL"), null;
-    return `${pattern} url 302 ${target}`;
+    skip(plugin, "Rewrite", line,
+      "header 动作语义待核实（resource-parser 归为 302/307，Script-Hub 不转 302 而是保留为独立动作）" +
+      "—— 未设备验证前不猜迁移，原样放弃");
+    return null;
   }
 
   // `response-body-replace-regex <search> <replace>` -> QX 原生 `url response-body <search> response-body <replace>`。
@@ -317,12 +345,12 @@ async function convertRewrite(line, plugin) {
     const data = m3[1];
     const isB64 = /mock-data-is-base64\s*=\s*true/i.test(rest);
     if (isB64) {
-      return `${pattern} url echo-response application/octet-stream echo-response data:application/octet-stream;base64,${data}`;
+      // base64（gRPC protobuf 等二进制）：脚本里返回解码后的字节。
+      const lit = `Uint8Array.from(atob(${JSON.stringify(data)}), function (c) { return c.charCodeAt(0); })`;
+      return { needsEchoScript: true, pattern, source: echoScriptSource(lit, true) };
     }
-    const mime = kind === "json" ? "application/json" : "text/plain";
-    // data: URI 里逗号和引号都要转义（QX 以空格分词，出现空白就会把行拆断）。
-    const payload = encodeURIComponent(data).replace(/%20/g, "%20");
-    return `${pattern} url echo-response ${mime} echo-response data:${mime};charset=utf-8,${payload}`;
+    // 数据以 JSON 字符串字面量嵌进脚本（QX 脚本里 body 是字符串）。
+    return { needsEchoScript: true, pattern, source: echoScriptSource(JSON.stringify(data), false) };
   }
 
   // ---------- Loon 的脚本化写法 `request|response if ${url} ~= /re/ then <动作>` ----------
@@ -598,8 +626,27 @@ async function fetchAsset(url) {
   }
 }
 
+/** 把 mock 生成的脚本落盘到 QuantumultX/rules/rewrite/kelee/mock/，返回 script-echo-response 行。 */
+async function materializeEchoScript({ pattern, source }, plugin) {
+  const hash = createHash("sha1").update(pattern + "\u0000" + source).digest("hex").slice(0, 12);
+  const rel = `QuantumultX/rules/rewrite/kelee/mock/${hash}.js`;
+  const abs = join(ROOT, rel);
+  if (!CHECK) {
+    mkdirSync(dirname(abs), { recursive: true });
+    if (!existsSync(abs) || readFileSync(abs, "utf8") !== source) writeFileSync(abs, source);
+  }
+  return `${pattern} url script-echo-response ${repoBase}/${rel}`;
+}
+
 /** 把脚本/资产镜像进仓库，返回仓库内相对路径；失败返回 null。 */
 async function mirrorAsset(url) {
+  // **本仓库自己的**地址：文件已经在磁盘上（materializeEchoScript 刚落盘），
+  // 不需要也不应该去网上抓 —— CI 里此时还没推送，抓必然失败，
+  // 结果是刚生成的规则被自己判成「镜像失败」丢掉。
+  if (url.startsWith(`${repoBase}/`)) {
+    const rel = decodeURIComponent(url.slice(repoBase.length + 1)).split("#")[0];
+    return existsSync(join(ROOT, rel)) ? rel : null;
+  }
   const rel = mirrorPathFor(url);
   const abs = join(ROOT, rel);
   if (existsSync(abs) && statSync(abs).size > 100) return rel;
@@ -662,12 +709,13 @@ const allHostnames = new Set();
 let deduped = 0;
 
 /**
- * 产物合并：同一 App 被拆成多个 kelee 插件时（实为同一个上游项目的不同版本，
- * 如 kokoryh `bilibili.lpx` 与 kelee `Bilibili_remove_ads.lpx`），
- * 在**插件顺序内**合并成一份产物 —— 而不是让两份规则在 [rewrite_remote] 里重复处理同一响应体。
+ * 产物合并：同一 App 被拆成多个上游插件时（实为同一作者的不同版本，
+ * 如 kokoryh 自建 `bilibili.lpx` 与 kelee 托管的 `Bilibili_remove_ads.lpx`），
+ * 在**转换期**合并成一份产物 —— 而不是让两份规则在 [rewrite_remote] 里重复处理同一响应体。
  *
- * 顺序即优先级：先出现的插件（Loon 的插件列表顺序）胜出，
- * 后面的插件里与前者语义重复的规则被丢弃并记账。
+ * 胜出者由 MERGE_GROUPS 的 `plugins[0]` **显式声明**，不看 Loon 的插件列表顺序：
+ * 那个顺序只代表「Loon 里谁先生效」，而用户的偏好可能与之不同。
+ * 胜出者的规则先占据判重池；同组后续插件里与之重复的被丢弃并记账。
  * 注意只在**跨插件**判重；同一插件内同 URL 的多条规则是链式互补，全部保留。
  */
 const mergedFilters = new Map();   // 产物名 -> { header, lines }（被合并插件的分流累加到这里）
@@ -743,6 +791,9 @@ for (const p of pluginOrder) {
     if (!line) continue;
     let r = await convertRewrite(line, p.name);
     if (r && typeof r === "object" && r.needsJqInline) r = await tryInlineJq(r.pattern, line, p.name);
+    if (r && typeof r === "object" && r.needsEchoScript) {
+      r = await materializeEchoScript(r, p.name);
+    }
     if (r) rewrites.push(r);
   }
   for (const raw of sectionLines(text, "Script") ?? []) {

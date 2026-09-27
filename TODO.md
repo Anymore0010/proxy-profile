@@ -8,7 +8,8 @@
 
 > **状态（本轮已修）**：原先记为「QX 无等价物」的多数动作，核对官方 `sample.conf`
 > 后确认 QX 都有等价物，只是转换器没实现 —— 已补齐转换：
-> `mock-response-body` → `echo-response`（含 base64）、
+> `mock-response-body` → **`script-echo-response` + 内联 body 的镜像脚本**
+> （~~`echo-response`~~ 不可用：它的正文必须是本机 Data 目录里的文件，不接受 URL/data: URI）、
 > `response-body-replace-regex` → `url response-body …`、
 > `header <url>` → `url 302`、
 > `response.json.jq`/`.json.delete`/`.json.jq_file`/`body.mock`/`reject_dict(200)` → `jsonjq-response-body`/`echo-response`/`reject-dict`、
@@ -17,6 +18,9 @@
 
 剩**真正无 QX 等价物**的（详见 `_conversion-report.json` 的 `skipped`）：
 
+- [ ] **`header <url>`（1 条，Spotify）**：**语义未证实**。resource-parser 归为 302/307，
+  Script-Hub 的 Rewrite-Parser 却把它保留为独立动作（对 Stash 用 `transparent`）。
+  未设备验证前按保守处理：**原样放弃并如实记账**，不写语义可能错的 302。
 - [ ] **`response-header-add`（1 条）**：QX 无行内改响应头动作，需写一个
   `script-response-header` 小脚本（B 站 gRPC 的 `grpc-status: 0`）。
 - [ ] **`AND/OR/NOT` 逻辑组合分流（6 条）**：QX 分流不支持组合，也无重写等价物。
