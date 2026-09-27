@@ -115,8 +115,80 @@ const stripQuotes = (s) => s.trim().replace(/^["']|["']$/g, "");
 /** `a.b c.d` -> `del(.a.b, .c.d)` */
 const jsonDelToJq = (paths) => `'del(${paths.map((p) => `.${p}`).join(", ")})'`;
 
+/** 按顶层逗号切参数（忽略引号/反引号/括号内的逗号）。 */
+function splitArgs(s) {
+  const out = [];
+  let depth = 0, cur = "", q = null;
+  for (const ch of s) {
+    if (q) {
+      cur += ch;
+      if (ch === q) q = null;
+      continue;
+    }
+    if (ch === '"' || ch === "'" || ch === "`") { q = ch; cur += ch; continue; }
+    if (ch === "(" || ch === "[") depth++;
+    if (ch === ")" || ch === "]") depth--;
+    if (ch === "," && depth === 0) { out.push(cur.trim()); cur = ""; continue; }
+    cur += ch;
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+/** 抓回 Loon 外链 .jq 并折叠成 QX 可用的单行表达式（剥注释、压空白、转义单引号）。 */
+async function inlineJqFile(url, plugin, line) {
+  const buf = await fetchAsset(url);
+  if (!buf) { skip(plugin, "Rewrite", line, `jq 文件取不到（${url}）`); return null; }
+  const inline = buf
+    .toString("utf8")
+    .split(/\r?\n/)
+    .map((l) => l.replace(/\s*#.*$/, "").trim())
+    .filter(Boolean)
+    .join(" ")
+    .replace(/'/g, "'\\''");
+  if (!inline) { skip(plugin, "Rewrite", line, "jq 文件折叠后为空"); return null; }
+  return inline;
+}
+
+/** 把 `a b c` 拆成 (search, replace)：QX 的 response-body 需要成对的两段，且都不得含空白。 */
+function splitTwoFields(rest) {
+  const s = rest.trim();
+  // 常见形式：`<search> <replace>`（QX 里两段都不能含空白，所以用第一个空白切）
+  const i = s.indexOf(" ");
+  if (i < 0) return { search: s, replace: "" };
+  return { search: s.slice(0, i), replace: s.slice(i + 1).trim() };
+}
+
+/**
+ * Loon 条件重写 `request|response if ${url} ~= /re/ then <动作>` -> QX 单行重写。
+ *
+ * 条件本身就是 URL 正则，而 QX 的每行重写天然「只对匹配该正则的 URL 生效」——
+ * 所以语义等价：pattern 用条件里的正则，动作部分走同一套动作转换。
+ * `@` 取反 / 多条件 AND 的写法仍然跳过（QX 无法表达）。
+ */
+async function convertIfThen(rawPat, op, thenPart, plugin, line) {
+  if (op !== "~=") {
+    // `== "https://exact/url"` -> 等价的正则（转义后首尾锚定）
+    if (op === "==" && rawPat.startsWith('"') && rawPat.endsWith('"')) {
+      const url = rawPat.slice(1, -1);
+      const esc = url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      // 首尾都要锚定：QX 的正则是**部分匹配**，少了 ^ 会误伤把该 URL 当参数的请求。
+      return convertRewrite(`^${esc}$ ${thenPart}`, plugin);
+    }
+    return skip(plugin, "Rewrite", line, "条件重写使用了 QX 无法表达的条件（@ 取反 / 组合）"), null;
+  }
+  if (!rawPat.startsWith("/") || !rawPat.endsWith("/")) {
+    return skip(plugin, "Rewrite", line, "条件重写的 URL 匹配式不是正则"), null;
+  }
+  const re = rawPat.slice(1, -1);
+  if (/\|\||&&|\s@\s/.test(re)) {
+    return skip(plugin, "Rewrite", line, "条件重写包含组合/取反条件（QX 无等价语法）"), null;
+  }
+  return convertRewrite(`${re} ${thenPart}`, plugin);
+}
+
 /** 转换 [Rewrite] 的一行。Loon = `<regex> <action> [args]`，QX = `<regex> url <action> [args]`。 */
-function convertRewrite(line, plugin) {
+async function convertRewrite(line, plugin) {
   const m = line.match(/^(\S+)\s+(\S+)\s*(.*)$/);
   if (!m) return null;
   const [, pattern, action, rest] = m;
@@ -156,12 +228,119 @@ function convertRewrite(line, plugin) {
   }
   if (a === "302" || a === "307") return `${pattern} url ${a} ${rest.trim()}`;
 
+  // `reject_dict(200)` / `reject_dict()`：Loon 函数式写法 -> QX 的 `reject-dict`
+  // （QX 的 reject-dict 固定返回 200 + `{}`，与 Loon 的 reject_dict(200) 等价；
+  //  传入非 200 的状态码时 QX 无对应，退回 reject-200。）
+  const fnRej = line.match(/^(\S+)\s+(reject[-_](?:dict|array|img|200|drop)?)\s*\((\d*)\)\s*$/i);
+  if (fnRej) {
+    const [, fpat, fname, code] = fnRej;
+    const key = fname.toLowerCase().replace(/_/g, "-");
+    const mapped = REWRITE_ACTION[key.toUpperCase()] ?? REWRITE_ACTION[key.replace(/-/g, "_").toUpperCase()];
+    if (mapped) {
+      if (code && code !== "200" && mapped === "reject-dict") return `${fpat} url reject-200`;
+      return `${fpat} url ${mapped}`;
+    }
+    return skip(plugin, "Rewrite", line, `未识别的函数式拒绝动作（${fname}）`), null;
+  }
+
+  // ---------- Loon 的 `response.json.*` / `response.body.mock` 动作名 ----------
+  // 这几种写法在 Loon 里把 jq 表达式/伪造体**直接内联在动作名里**（带括号和反引号），
+  // 所以上面的 `^(\S+)\s+(\S+)\s*(.*)$` 切出来的 action 是残缺的 —— 必须先用整行匹配。
+  const dotted = line.match(/^(\S+)\s+(response|request)\.(json\.jq_file|json\.jq|json\.delete|body\.mock|header\.set)\s*\(([\s\S]*)\)\s*$/);
+  if (dotted) {
+    const [, dpat, dir, kind, rawArgs] = dotted;
+    const isResp = dir === "response";
+    const stripQ = (s) => s.trim().replace(/^["'`]|["'`]$/g, "");
+    if (kind === "json.jq") {
+      const expr = rawArgs.trim().replace(/^`|`$/g, "");
+      if (!expr) return skip(plugin, "Rewrite", line, "json.jq 无表达式"), null;
+      return `${dpat} url ${isResp ? "jsonjq-response-body" : "jsonjq-request-body"} '${expr.replace(/'/g, "'\\''")}'`;
+    }
+    if (kind === "json.delete") {
+      const paths = rawArgs.split(",").map(stripQ).filter(Boolean);
+      if (!paths.length) return skip(plugin, "Rewrite", line, "json.delete 无路径"), null;
+      return `${dpat} url jsonjq-response-body ${jsonDelToJq(paths)}`;
+    }
+    if (kind === "json.jq_file") {
+      // 与 `jq-path=` 同源：外链 .jq 必须抓回内联（QX 不会去取这个文件）。
+      const url = stripQ(rawArgs);
+      const inlined = await inlineJqFile(url, plugin, line);
+      if (!inlined) return null;
+      return `${dpat} url jsonjq-response-body '${inlined}'`;
+    }
+    if (kind === "body.mock") {
+      // `response.body.mock("json", `…`, 200)` / (…, true) —— 伪造成常量响应体。
+      const parts = splitArgs(rawArgs);
+      const kindName = stripQ(parts[0] ?? "text").toLowerCase();
+      const payload = (parts[1] ?? "").trim().replace(/^`|`$/g, "").replace(/^"|"$/g, "");
+      if (!payload) return skip(plugin, "Rewrite", line, "body.mock 无 payload"), null;
+      const mime = kindName === "json" ? "application/json" : "text/plain";
+      const enc = encodeURIComponent(payload);
+      return `${dpat} url echo-response ${mime} echo-response data:${mime};charset=utf-8,${enc}`;
+    }
+    if (kind === "header.set") {
+      // QX 没有「直接改响应头」的行内动作，但 `script-response-header` 可以做 —— 需脚本。
+      return skip(plugin, "Rewrite", line, "response.header.set 需要 script-response-header 小脚本（QX 无行内等价动作）"), null;
+    }
+  }
+
+  // ---------- 以下四类原先被记成「QX 无对应动作名」，实际都有等价物 ----------
+
+  // `header <url>`：Loon 的**重定向**动作（不是改 HTTP 头）。
+  // 权威依据：KOP-XIAO resource-parser.js 的 `subs[i].split(" ")[2] == "header"` 分支
+  // 把它与 302/307 归在同一类，产出 `url 302 <url>`。
+  if (a === "header") {
+    const target = rest.trim();
+    if (!target) return skip(plugin, "Rewrite", line, "header 无目标 URL"), null;
+    return `${pattern} url 302 ${target}`;
+  }
+
+  // `response-body-replace-regex <search> <replace>` -> QX 原生 `url response-body <search> response-body <replace>`。
+  if (a === "response-body-replace-regex") {
+    const { search, replace } = splitTwoFields(rest);
+    if (!search || !replace) {
+      return skip(plugin, "Rewrite", line, "response-body-replace-regex 需要成对的 search/replace"), null;
+    }
+    return `${pattern} url response-body ${search} response-body ${replace}`;
+  }
+
+  // `mock-response-body data-type=… data="…"`：直接返回伪造 body（不请求上游）。
+  // QX 无同名动作，但两种等价写法：
+  //   ① 纯文本/JSON 常量 -> `echo-response <mime> echo-response <data: 或 http(s) 文件 URL>`
+  //      （QX 的 echo-response 的第三段可以是 `data:` URI，也可以是本仓库镜像过的文件 URL）
+  //   ② base64（gRPC protobuf 等二进制）-> `echo-response application/octet-stream echo-response data:application/octet-stream;base64,<b64>`
+  if (a === "mock-response-body" || a === "mock-response") {
+    const m2 = rest.match(/data-type\s*=\s*(\S+?)(?:,|\s|$)/i);
+    const m3 = rest.match(/data\s*=\s*"([\s\S]*)"\s*(?:mock-data-is-base64|status-code|$)/i);
+    if (!m3) return skip(plugin, "Rewrite", line, "mock-response-body 取不到 data"), null;
+    const kind = (m2 ? m2[1] : "text").toLowerCase();
+    const data = m3[1];
+    const isB64 = /mock-data-is-base64\s*=\s*true/i.test(rest);
+    if (isB64) {
+      return `${pattern} url echo-response application/octet-stream echo-response data:application/octet-stream;base64,${data}`;
+    }
+    const mime = kind === "json" ? "application/json" : "text/plain";
+    // data: URI 里逗号和引号都要转义（QX 以空格分词，出现空白就会把行拆断）。
+    const payload = encodeURIComponent(data).replace(/%20/g, "%20");
+    return `${pattern} url echo-response ${mime} echo-response data:${mime};charset=utf-8,${payload}`;
+  }
+
+  // ---------- Loon 的脚本化写法 `request|response if ${url} ~= /re/ then <动作>` ----------
+  // QX 没有 if 语法，但**条件本身就是一个 URL 正则** —— 直接取出来当 pattern，
+  // 再把 then 后面的动作按普通动作转换即可（等价改写，不是丢弃）。
+  const cond = line.match(/^(?:request|response)\s+if\s+\$\{url\}\s*(~=|==)\s*(\/.*\/|".*")\s+then\s+(.+)$/);
+  if (cond) {
+    const [, op, rawPat, thenPart] = cond;
+    const inner = await convertIfThen(rawPat, op, thenPart.trim(), plugin, line);
+    return inner;
+  }
+
   // 注意措辞：这里是**转换器没实现**，不等于 QX 做不到。已核实的等价物：
   //   mock-response-body            -> script-echo-response / echo-response（返回固定 body）
   //   response-body-replace-regex   -> `url response-body <正则> response-body <替换>`
   //   header（重写请求 URL）          -> `url 302 <新URL>` / `url 307 <新URL>`
   // 写错措辞会把「没实现」传播成「做不到」，下次维护就不会去补了。
-  skip(plugin, "Rewrite", line, `转换器未实现该动作（${action}）；QX 侧有等价物，见 TODO.md`);
+  skip(plugin, "Rewrite", line, `转换器未实现该动作（${action}）；QX 侧需 script-response-header 小脚本，见 TODO.md`);
   return null;
 }
 
@@ -207,9 +386,37 @@ function argKeysOf(optsRaw) {
 
 /** 转换 [Script] 的一行。 */
 function convertScript(line, plugin, argDefaults) {
-  const m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.*)$/);
+  let m = line.match(/^(http-request|http-response)\s+(\S+)\s+(.*)$/);
   if (!m) {
-    skip(plugin, "Script", line, "Loon 脚本化写法（`request/response if ${url} ~= ...`），QX 无等价语法");
+    // Loon 的 `request|response if ${url} ~= /re/ then script("...") with k=v, ...`
+    // 条件就是 URL 正则（QX 每行重写天然只对匹配该正则的 URL 生效），
+    // `then script("...")` 的 `with k=v` 选项与 [Script] 段的 `script-path=..., k=v` 同构 ——
+    // 归一成 http-request/http-response 形式后走完全相同的下游逻辑。
+    const c = line.match(/^(request|response)\s+if\s+\$\{url\}\s*(~=|==)\s*(\/.*\/)".*"?\s+then\s+script\s*\(\s*"([^"]+)"\s*(?:,[^)]*)?\)\s*(?:with\s+)?(.*)$/)
+      ?? line.match(/^(request|response)\s+if\s+\$\{url\}\s*(~=|==)\s*(\/.*\/)\s+then\s+script\s*\(\s*"([^"]+)"\s*(?:,[^)]*)?\)\s*(?:with\s+)?(.*)$/);
+    if (c) {
+      const [, dir, op, rawPat, scriptUrl, opts] = c;
+      if (op === "~=" && rawPat.startsWith("/") && rawPat.endsWith("/")) {
+        m = [null, dir === "request" ? "http-request" : "http-response", rawPat.slice(1, -1), `script-path=${scriptUrl}${opts ? ", " + opts : ""}`];
+      }
+    }
+  }
+  if (!m) {
+    // `generic script-path=...`（Loon 菜单手动触发脚本）：QX 的**挂载点是有的** ——
+    // [task_local] 的 `event-interaction`（官方 sample.conf 确认）。
+    // 但这里不自动产出：这些脚本依赖 Loon 的节点上下文
+    // （`$environment.params.node` / `nodeInfo`，见 LocationDetection.js:13/58），
+    // QX 下拿不到，迁过来只是个点了就报错的入口。
+    // 该插件功能已由 sources.json 的 tasks「节点详情查询」替代（`replaces` 字段声明）。
+    if (/^generic\s/.test(line)) {
+      const sp = line.match(/script-path=(\S+?)(?:,|$)/);
+      skip(plugin, "Script", line,
+        "菜单触发脚本：QX 有 event-interaction 挂载点，但脚本依赖 Loon 的节点上下文" +
+        "（$environment.params.node / nodeInfo），QX 下拿不到；功能已由 tasks「节点详情查询」替代" +
+        (sp ? ` —— ${stripQuotes(sp[1]).split("/").pop()}` : ""));
+      return null;
+    }
+    skip(plugin, "Script", line, "既不是 request/response 脚本，也不是可迁移的 generic 脚本");
     return null;
   }
   const [, trigger, pattern, optsRaw] = m;
@@ -434,7 +641,10 @@ mkdirSync(OUT_FILTER, { recursive: true });
 const claimedSigs = [];      // kelee 侧已产出的语义签名
 const claimedExact = new Map(); // kelee 侧已产出的整行
 const seeded = [];           // 参与比对的既有源（仅用于报告）
-const isBodyRewrite = (l) => /\surl\s+(script-|jsonjq-)/.test(l);
+// 「会改写响应体」的动作 —— 重复了才有真风险（reject 族重复是幂等的）。
+// echo-response 也必须算进来：两个插件对同一 URL 返回不同伪造 body 是真冲突
+// （本轮实例：kokoryh bilibili.lpx 与 kelee Bilibili_remove_ads.lpx 各自拦 B 站同一批接口）。
+const isBodyRewrite = (l) => /\surl\s+(script-|jsonjq-|echo-response)/.test(l);
 /** 重写动作分类：reject 族重复是幂等的（同策略同结果），body 改写重复才有真风险。 */
 const REJECT_ACTIONS = new Set(["reject", "reject-dict", "reject-200", "reject-array", "reject-img", "reject-drop"]);
 const actionOf = (line) => (line.match(/\surl(?:-and-header)?\s+(\S+)/) ?? [])[1]?.toLowerCase() ?? "";
@@ -482,7 +692,7 @@ for (const p of index.plugins) {
   for (const raw of sectionLines(text, "Rewrite") ?? []) {
     const line = cleanRule(raw);
     if (!line) continue;
-    let r = convertRewrite(line, p.name);
+    let r = await convertRewrite(line, p.name);
     if (r && typeof r === "object" && r.needsJqInline) r = await tryInlineJq(r.pattern, line, p.name);
     if (r) rewrites.push(r);
   }
@@ -490,7 +700,9 @@ for (const p of index.plugins) {
     const line = cleanRule(raw);
     if (!line) continue;
     const r = convertScript(line, p.name, argDefaults);
-    if (r) rewrites.push(r.line);
+    if (!r) continue;
+    // Loon `generic` 菜单脚本 -> QX [task_local] 的 event-interaction
+    rewrites.push(r.line);
   }
 
   // kelee 侧内部去重：同一 (正则, 动作) 只在**本插件集合内**判重，
@@ -505,13 +717,17 @@ for (const p of index.plugins) {
     }
     // 只在「会改写响应体」的动作上判重（reject 类重复幂等，可保留）。
     const sig = ruleSig(pat);
-    const dupInKelee = claimedSigs.some((c) => sameTarget(sig, c.sig)) || claimedExact.has(r);
+    // 同一 URL 正则被两个插件产出、动作不同（如 kokoryh 与 kelee 都在拦 B 站同一批接口，
+    // 但返回的 body 不一样）—— 这是**真冲突**。Loon 按插件列表顺序先生效，
+    // 所以这里也按「先出现的插件胜出」，与 Loon 行为一致。
+    const samePat = claimedSigs.some((c) => c.pat === pat);
+    const dupInKelee = samePat || claimedSigs.some((c) => sameTarget(sig, c.sig)) || claimedExact.has(r);
     if (dupInKelee) {
       deduped++;
       skip(p.name, "Rewrite", r, "与另一个 kelee 插件产出重复（保留先出现的那个）");
       continue;
     }
-    claimedSigs.push({ sig, from: selfRel });
+    claimedSigs.push({ pat, sig, from: selfRel });
     claimedExact.set(r, selfRel);
     kept.push(r);
   }

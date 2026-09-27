@@ -8,7 +8,6 @@
 ^https:\/\/app-api\.smzdm\.com\/mychannel\/list$ url reject-dict
 ^https:\/\/h5\.smzdm\.com\/user\/coupon\/coupon_list\? url reject
 ^https:\/\/haojia-api\.smzdm\.com\/home\/list\? url jsonjq-response-body 'del(.data.header_operation.theme)'
-^https:\/\/haojia-api\.smzdm\.com\/home\/list\? url jsonjq-response-body '.data.rows |= map(select(.cell_type == "39001")) | .data.banner_v2 |= map(select(.cell_type == "21028"))'
 ^https:\/\/haojia\.m\.smzdm\.com\/detail_modul\/user_related_modul\? url jsonjq-response-body 'del(.data.super_coupon)'
 ^https:\/\/haojia\.m\.smzdm\.com\/detail_modul\/other_modul\? url jsonjq-response-body 'del(.data.banner)'
 ^https:\/\/user-api\.smzdm\.com\/vip$ url jsonjq-response-body 'del(.data.activity_entrance_info, .data.big_banner, .data.top_banner, .data.banner_switch, .data.yaoqingshaiwu, .data.right_info)'

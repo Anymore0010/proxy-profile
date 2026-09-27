@@ -3,7 +3,6 @@
 # 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs
 
 ^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.base.statistics)'
-^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.cards[] | select(.alias_name == "focus" or .alias_name == "ad_mobile_flow" or .alias_name == "ad_trueview"))'
 ^https:\/\/cards\.iqiyi\.com\/views_category\/3\.0\/category_home\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.cards[] | select(.alias_name == "entrence_focus" or .alias_name == "ad_trueview"))'
 ^https:\/\/cards\.iqiyi\.com\/waterfall(-plt)?\/3\.0\/feed\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.. | select(.block_class?))'
 ^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'del(.kv_pair.activity_tab)'

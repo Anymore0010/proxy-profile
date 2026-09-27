@@ -1057,6 +1057,14 @@
       "parser": false,
       "enabled": false,
       "note": "对应源 Loon 的 Sub-Store.lpx（源配置里即 disabled）。工具类，需要时在 QX 里启用。"
+    },
+    {
+      "id": "rewrite-kelee-bilibili",
+      "tag": "哔哩哔哩增强(重写)",
+      "parser": false,
+      "enabled": true,
+      "local_file": "QuantumultX/rules/rewrite/kelee/bilibili.snippet",
+      "note": "kokoryh Sparkle 的 bilibili.lpx 转换产物（分流的姊妹条目）。\n本轮补齐 Loon `response.json.*` / `body.mock` / `reject_dict()` 动作后首次产出重写规则。"
     }
   ],
   "tasks": [

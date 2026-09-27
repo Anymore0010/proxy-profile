@@ -18,9 +18,15 @@
 它自己的 UA → 403 → 脚本静默不执行。所以脚本全部抓进 `snapshot/host/kelee.one/`
 并改写成本仓库地址。
 
-无法转换的构造（QX 确实没有对应语法）逐条记账在 `_conversion-report.json`，
-例如 `AND(...PROTOCOL QUIC)`、`mock-response-body`、Loon 的脚本化写法
-`request if ${url} ~= ...`。以下是逐条对照。
+转换器**未实现**的构造逐条记账在 `_conversion-report.json`。
+⚠ 注意区分两件事：**「转换器没实现」≠「QX 做不到」**。
+下面这些曾被我记成「QX 无此语法」，核对官方 sample.conf 后确认 **QX 都有等价物**，
+只是转换器（当时）没写：`mock-response-body` → `echo-response`、
+`response-body-replace-regex` → `url response-body <re> response-body <repl>`、
+`header <url>`（重定向）→ `url 302`、`if ${url} ~= /re/ then …` → 条件本身就是 URL 正则、
+`generic` 菜单脚本 → `[task_local]` 的 `event-interaction`。
+**真正**无等价物的只有：`AND/OR/NOT` 逻辑组合分流、`DEST-PORT`、`PROTOCOL QUIC` 条件、
+`response-header-add`（需 `script-response-header` 小脚本）。以下是逐条对照。
 
 ## 分流规则（Loon `[Remote Rule]`）
 
@@ -81,7 +87,8 @@ Loon 的 `.lsr` 与 Quantumult X 的 `.list` 是同一套 `host-suffix, x, POLIC
 
 - `AND(...PROTOCOL QUIC)` —— QX 无 PROTOCOL 条件（已由 `udp_drop_list=443` 覆盖）
 - `DEST-PORT` 分流 —— QX 分流无此类型
-- `mock-response-body` / `response-header-add` —— QX 无该动作名
+- `response-header-add` —— QX 无**行内**等价动作（需 `script-response-header` 小脚本）
+  （`mock-response-body` 已实现：转 `echo-response`）
 - Loon 的脚本化写法 `request/response if ${url} ~= ...` —— QX 无等价语法
 - 插件参数 `argument=` / `[Argument]` —— QX 无插件参数机制，脚本走自身默认分支
 

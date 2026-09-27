@@ -3,6 +3,7 @@
 # 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs
 
 ^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/pendragon\/ url reject-dict
+^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/artistview\/v1\/artist\/(.*)&platform=iphone url 302 https://spclient.wg.spotify.com/artistview/v1/artist/$1&platform=ipad
 ^https:\/\/(?:\w+-spclient|spclient\.wg)\.spotify\.com(?::443)?\/(?:bootstrap|user-customization-service) url script-response-body https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/snapshot/host/kelee.one/Resource/JavaScript/Spotify/Spotify_remove_ads.js
 
 hostname = *-spclient.spotify.com, spclient.wg.spotify.com

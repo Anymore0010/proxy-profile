@@ -56,13 +56,22 @@ Loon 和 Quantumult X 的差异不在语法，而在**功能承载方式**：
 - `response-body-json-replace a v` → `jsonjq-response-body '.a = v'`
 - `jq-path=` 外链 jq → 抓回并**折叠成单行**再内联（剥掉 `#` 注释，否则会把单行 rewrite 截断）
 
-QX 确实没有对应语法、**必须显式跳过**的（转换器逐条记账，绝不静默丢弃）：
+跳过的（转换器逐条记账，绝不静默丢弃）。⚠ 分清两类：
 
-- `AND(... PROTOCOL QUIC)` —— QX 无 PROTOCOL 条件；已由 `[general]` 的 `udp_drop_list=443` 覆盖（4 条）
-- `DEST-PORT` 分流 —— QX 分流词表里没有（4 条）
-- `AND/OR/NOT` 里含 `OR`、或无重写等价物的组合（6 条）
-- `mock-response-body` / `response-header-add` 等 QX 不存在的重写动作（9 条）
-- `request/response if ${url} ~= ...` —— Loon 的脚本化写法（10 + 19 条）
+**A. QX 真的没有的语法**（无法实现）：
+
+- `AND(... PROTOCOL QUIC)` —— QX 无 PROTOCOL 条件；已由 `[general]` 的 `udp_drop_list=443` 覆盖
+- `DEST-PORT` 分流 —— QX 分流词表里没有
+- `AND/OR/NOT` 里含 `OR`、或无重写等价物的组合
+- `response-header-add` —— QX 无行内动作，需 `script-response-header` 小脚本
+
+**B. QX 有等价物、之前只是转换器没实现**（已补齐）：
+
+- `mock-response-body` → `echo-response`（含 base64 → `data:…;base64,`）
+- `response-body-replace-regex` → `url response-body <re> response-body <repl>`
+- `header <url>`（Loon 的重定向动作）→ `url 302 <url>`
+- `request/response if ${url} ~= /re/ then …` → 条件本身就是 URL 正则，直接当 pattern
+- `response.json.jq` / `.json.delete` / `.json.jq_file` / `body.mock` / `reject_dict(200)` → `jsonjq-response-body` / `echo-response` / `reject-dict`
 - 脚本镜像失败时**整条丢弃**（绝不回退成上游直链）：`CommonScript/replace-body.js` 已 404（1 条）
 
 ### kelee 插件是**权威上游**（其它重写资源只补空缺）
