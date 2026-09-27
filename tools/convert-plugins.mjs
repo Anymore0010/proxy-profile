@@ -676,12 +676,41 @@ const mergedRewrites = new Map();  // 产物名 -> { header, lines, hosts }
 const mergePools = new Map();      // 产物名 -> 已产出规则（语义签名）
 const mergePatPools = new Map();  // 产物名 -> 已产出 URL 正则
 const mergeExactPools = new Map();// 产物名 -> 已产出整行
-const MERGE_INTO = new Map([
-  // 后者 -> 前者（保留的产物名）
-  ["Bilibili_remove_ads.lpx", "bilibili.lpx"],
-]);
+/**
+ * 合并组：同一 App 被拆成多个上游插件时，合并成一份产物。
+ *
+ * `plugins` 的**第一个是胜出者**（它的规则优先占据判重池，后面的插件与之重复的规则被丢弃）。
+ * 注意这里显式声明胜出者，而不是靠 index.plugins 的遍历顺序 —— Loon 的插件列表顺序
+ * （kokoryh 第 6、kelee 第 31）只代表"Loon 里谁先生效"，用户的偏好可以与之不同。
+ * 用户 2026-09-27 明确：**B 站用 kelee 版胜出**（kelee 的实现更新、覆盖面更广）。
+ */
+const MERGE_GROUPS = [
+  { name: "bilibili", plugins: ["Bilibili_remove_ads.lpx", "bilibili.lpx"] },
+];
+const mergeTargetOf = new Map();   // 插件名 -> 产物名
+const mergeWinnerOf = new Map();   // 产物名 -> 胜出插件名
+for (const g of MERGE_GROUPS) {
+  g.plugins.forEach((n, i) => {
+    mergeTargetOf.set(n, g.name.replace(/\.lpx$/, ""));
+    if (i === 0) mergeWinnerOf.set(g.name.replace(/\.lpx$/, ""), n);
+  });
+}
 
+// 按「合并组内胜出者优先」重排遍历顺序（组内成员插在首个成员原本的位置）
+const pluginOrder = [];
+const seenInGroup = new Set();
 for (const p of index.plugins) {
+  const g = MERGE_GROUPS.find((x) => x.plugins.includes(p.name));
+  if (!g) { pluginOrder.push(p); continue; }
+  if (seenInGroup.has(g.name)) continue;
+  seenInGroup.add(g.name);
+  for (const nm of g.plugins) {
+    const m = index.plugins.find((x) => x.name === nm);
+    if (m) pluginOrder.push(m);
+  }
+}
+
+for (const p of pluginOrder) {
   if (!p.file) continue;
   const text = readFileSync(join(ROOT, p.file), "utf8");
   const nm = text.match(/^#!name\s*=\s*(.+)$/m)?.[1]?.trim() || p.name.replace(/\.lpx$/, "");
@@ -694,8 +723,7 @@ for (const p of index.plugins) {
   }
   const base = p.name.replace(/\.lpx$/, "");
   // 该插件的规则最终写进哪个产物（被合并时写进「前者」的产物）
-  const mergeTarget = MERGE_INTO.get(p.name);
-  const targetBase = mergeTarget ? mergeTarget.replace(/\.lpx$/, "") : base;
+  const targetBase = mergeTargetOf.get(p.name) ?? base;
   const selfRel = `QuantumultX/rules/rewrite/kelee/${targetBase}.snippet`;
 
   const argDefaults = parseArgumentDefaults(text);
@@ -735,7 +763,7 @@ for (const p of index.plugins) {
   // json-jq），全都必须保留。第一版把去重状态声明在插件循环之外、又用「同 URL 即重复」
   // 判据，于是插件内第 2、3 条被自己的第 1 条顶掉 —— 静默功能损失。
   const claimedLocalPat = new Set();          // 本插件内用：同 URL 只用于**报错提示**，不丢规则
-  // 跨插件/跨源去重池：按**产物**持有（被 MERGE_INTO 合并的插件共享同一个池子，
+  // 跨插件/跨源去重池：按**产物**持有（被 MERGE_GROUPS 合并的插件共享同一个池子，
   // 所以后一个插件里与前者重复的规则会在这里被丢掉）。
   const mergeKey = targetBase;
   const claimedCross = mergePools.get(mergeKey) ?? [];
@@ -773,7 +801,7 @@ for (const p of index.plugins) {
     // 于是同插件内两条**不同** URL 被误判为同一目标并互相顶掉。实测损失：kelee
     // FleaMarket_remove_ads 的 12 条闲鱼接口规则被它自己的第 1 条吃掉。
     // 排除自身后剩下的才是真「跨插件重复」。
-    // 只与**别的插件**产出的行比语义。归属键必须是**插件名**：被 MERGE_INTO 合并的两个插件
+    // 只与**别的插件**产出的行比语义。归属键必须是**插件名**：被 MERGE_GROUPS 合并的两个插件
     // 算出的 selfRel 相同（同一个产物），用产物路径排除会把整个池子排除掉，等于关闭跨插件去重。
     const sameSig = claimedCross.find((c) => c.plugin !== p.name && sameTarget(sig, c.sig));
     const sameExact = claimedCrossExact.get(r);
@@ -823,7 +851,7 @@ for (const p of index.plugins) {
     `# 源插件: ${p.url}`,
     "# 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs",
   ];
-  // 被 MERGE_INTO 指定的插件（作为「后者」）不单独产出文件：它的规则累加到「前者」的产物里。
+  // 被合并组内的非胜出插件不单独产出文件：它的规则累加到「前者」的产物里。
   // 这样 [rewrite_remote]/[filter_remote] 里只有一份条目，同一响应体不会被处理两次。
   // 分流侧跨插件去重：同产物内 (type, value, policy) 完全相同的行只留一条。
   const fKey = (l) => l.trim().toLowerCase();
@@ -844,10 +872,11 @@ for (const p of index.plugins) {
   if (!slotR.header) slotR.header = header;
   mergedFilters.set(targetBase, slotF);
   mergedRewrites.set(targetBase, slotR);
-  if (mergeTarget) {
+  if (mergeTargetOf.has(p.name)) {
     pluginReport.push({
       plugin: p.name, name: nm, enabled: true, rules: filters.length, rewrites: localized.length,
       hostnames: hosts.length, merged_into: `${targetBase}.snippet`,
+      merge_role: mergeWinnerOf.get(targetBase) === p.name ? "胜出者（规则优先）" : "被合并（重复的已丢弃并记账）",
     });
     continue;   // 不单独写文件
   }

@@ -469,7 +469,7 @@
       "enabled": true,
       "kelee_plugin": "bilibili.lpx",
       "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "kokoryh Sparkle `bilibili.lpx` + kelee `Bilibili_remove_ads.lpx` **合并产物**。\n两个上游其实是同一个项目的不同版本，分属两个插件会让 QX 重复处理同一响应体，故在转换期合并（见 tools/convert-plugins.mjs 的 MERGE_INTO）。"
+      "note": "kokoryh Sparkle `bilibili.lpx` + kelee `Bilibili_remove_ads.lpx` **合并产物（kelee 版胜出）**。\n两个上游其实是同一个项目的不同版本，分属两个插件会让 QX 重复处理同一响应体，故在转换期合并（见 tools/convert-plugins.mjs 的 MERGE_GROUPS）。"
     },
     {
       "id": "filter-kelee-iQiYi_Video_remove_ads",

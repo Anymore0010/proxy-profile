@@ -1,17 +1,17 @@
 {
   "total": 17,
-  "ok": 17,
-  "failed": 0,
-  "rules": 334890,
+  "ok": 16,
+  "failed": 1,
+  "rules": 333925,
   "resources": [
     {
       "id": "filter-awavenue",
       "upstream": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list",
-      "file": "QuantumultX/rules/filter/AWAvenue.list",
-      "rules": 965,
-      "dropped": 0,
-      "adjusted": 0,
-      "error": null
+      "file": null,
+      "rules": null,
+      "dropped": null,
+      "adjusted": null,
+      "error": "The socket connection was closed unexpectedly. For more information, pass `verbose: true` in the second argument to fetch()"
     },
     {
       "id": "filter-apple-ai",
