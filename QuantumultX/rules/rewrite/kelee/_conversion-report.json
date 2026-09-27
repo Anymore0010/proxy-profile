@@ -188,7 +188,7 @@
       "name": "爱奇艺去广告",
       "enabled": true,
       "rules": 6,
-      "rewrites": 22,
+      "rewrites": 21,
       "hostnames": 1
     },
     {
@@ -559,6 +559,12 @@
       "section": "Rewrite",
       "line": "^https?:\\/\\/vv\\.video\\.qq\\.com\\/getvinfo url script-request-body https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js",
       "reason": "脚本镜像失败、已丢弃（避免留下必然失效的直链）: https://kelee.one/Resource/JavaScript/CommonScript/replace-body.js"
+    },
+    {
+      "plugin": "iQiYi_Video_remove_ads.lpx",
+      "section": "Rewrite",
+      "line": "^https:\\/\\/comment-card\\.iqiyi\\.com\\/views_comment\\/3\\.0\\/long_video_comments\\? response-body-json-jq ''",
+      "reason": "json-jq 表达式为空（QX 无法表达空表达式，丢弃）"
     },
     {
       "plugin": "RedPaper_remove_ads.lpx",

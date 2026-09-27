@@ -351,6 +351,19 @@
       "note": "**可选版本**（默认关闭）。与主版本同一套来源，但 blackmatrix7 用完整 Advertising.list：288195 条 / 约 11.5 MB，QX 启动要全部载入内存。\n与主版本只启一个 —— 同时启用会让同一域名被两份列表重复匹配。"
     },
     {
+      "id": "filter-awavenue",
+      "tag": "AWAvenue 秋风广告规则",
+      "policy": "reject",
+      "vendor": true,
+      "upstream_url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list",
+      "vendored_as": "filter/AWAvenue.list",
+      "local_file": "QuantumultX/rules/filter/AWAvenue.list",
+      "parser": false,
+      "enabled": false,
+      "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
+      "note": "秋风广告规则。**已并入 AdsBlock 的 merges**（不再独立生效，故 enabled=false）；但 `vendor: true` 必须保留 —— 每周的刷新由它驱动，删条目会让规则冻结在旧副本。"
+    },
+    {
       "id": "filter-kelee-bilibili",
       "tag": "哔哩哔哩增强",
       "local_file": "QuantumultX/rules/filter/kelee/bilibili.list",

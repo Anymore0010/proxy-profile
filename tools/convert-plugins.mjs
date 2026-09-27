@@ -260,7 +260,12 @@ async function convertRewrite(line, plugin) {
   }
   if (a === "response-body-json-jq" || a === "request-body-json-jq") {
     const expr = rest.trim();
-    if (!expr) return skip(plugin, "Rewrite", line, "json-jq 无表达式"), null;
+    if (!expr || expr === "''" || expr === '""') {
+      // 源插件里写的是 `response-body-json-jq ''`（空表达式）—— 在 Loon 里无副作用，
+      // 但 QX 会拿到 `jsonjq-response-body ''`，是**非法 jq 表达式**（解析失败）。
+      // 语义上「什么都不做」在 QX 无法表达，且同 URL 另有规整规则 → 丢弃并记账。
+      return skip(plugin, "Rewrite", line, "json-jq 表达式为空（QX 无法表达空表达式，丢弃）"), null;
+    }
     return `${pattern} url ${a.startsWith("response") ? "jsonjq-response-body" : "jsonjq-request-body"} ${expr}`;
   }
   if (a === "response-body" || a === "request-body") {

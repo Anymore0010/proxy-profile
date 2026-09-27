@@ -481,6 +481,33 @@ function checkDroppedRulesStillCovered() {
   return bad;
 }
 
+/**
+ * 单行超长告警：QX 的 rewrite 是**单行**解析的，超长行（尤其超长 jq 表达式）
+ * 有解析/性能风险。实测 `QuarkBrowser_remove_ads.snippet` 有一行 27158 字符
+ * （703 个 del() 路径合并成的表达式）。
+ * 用 warn 而非 err：hostname 行天然很长（实测最长 25732 字符）且 QX 能处理，
+ * 所以「超长即非法」不能当硬判据。
+ */
+function checkOverlongRuleLines() {
+  const dir = join(ROOT, "QuantumultX", "rules");
+  if (!existsSync(dir)) return 0;
+  let n = 0;
+  for (const f of readdirSync(dir, { recursive: true }).map(String)) {
+    if (!/\.(snippet|list|conf)$/.test(f)) continue;
+    const rel = `QuantumultX/rules/${f}`;
+    const lines = readFileSync(join(dir, f), "utf8").split(/\r?\n/);
+    lines.forEach((l, i) => {
+      if (l.startsWith("#") || l.startsWith(";")) return;
+      if (/^\s*hostname\s*=/.test(l)) return;   // hostname 行长是有意的
+      if (l.length > 8192) {
+        warn(rel, i + 1, `单行 ${l.length} 字符，QX 单行解析可能失败（${l.slice(0, 60)}…）`);
+        n++;
+      }
+    });
+  }
+  return n;
+}
+
 function checkRewriteDuplicates() {
   const src = JSON.parse(readFileSync(join(ROOT, "tools", "sources.json"), "utf8"));
 
@@ -653,6 +680,7 @@ const repoSlug = resolveRepoBase(ROOT).slug;
   if (vendored) console.log(`QuantumultX/rules  ${vendored.files} file(s), ${vendored.rules} rules`);
   const dupes = checkRewriteDuplicates();
   const droppedUncovered = checkDroppedRulesStillCovered();
+  const overlong = checkOverlongRuleLines();
   console.log(`重写去重检查  跨源重复脚本重写: ${dupes}`);
   const hn = checkRewriteHostnames();
   console.log(`MITM 主机名检查  含脚本规则且自带 hostname 的文件: ${hn}`);
