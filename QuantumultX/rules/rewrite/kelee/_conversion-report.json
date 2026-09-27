@@ -413,37 +413,37 @@
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/0efe7d43b54d.js",
+      "line": "^https:\\/\\/app\\.bilibili\\.com\\/x\\/v2\\/splash\\/list\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/8ed46728ecde.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/ap[ip]\\.bilibili\\.com\\/x\\/(resource\\/(top\\/activity|patch\\/tab(\\/v2)?)|v2\\/search\\/square|vip\\/ads\\/materials)\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/e34faccb575f.js",
+      "line": "^https:\\/\\/ap[ip]\\.bilibili\\.com\\/x\\/(resource\\/(top\\/activity|patch\\/tab(\\/v2)?)|v2\\/search\\/square|vip\\/ads\\/materials)\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/49829a9ae0ab.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/activity\\/deliver\\/material\\/receive\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/140b850b6362.js",
+      "line": "^https:\\/\\/api\\.bilibili\\.com\\/pgc\\/activity\\/deliver\\/material\\/receive\\? url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/ed21f6613f4b.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https://grpc\\.biliapi\\.net/bilibili\\.app\\.interface\\.v1\\.Teenagers/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/7bcdef33f736.js",
+      "line": "^https://grpc\\.biliapi\\.net/bilibili\\.app\\.interface\\.v1\\.Teenagers/ModeStatus$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/25f020b8e400.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https://grpc\\.biliapi\\.net/bilibili\\.app\\.interface\\.v1\\.Search/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/62147a036e9d.js",
+      "line": "^https://grpc\\.biliapi\\.net/bilibili\\.app\\.interface\\.v1\\.Search/DefaultWords$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/ff56b570ddd1.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {
       "plugin": "bilibili.lpx",
       "section": "Rewrite",
-      "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.(view\\.v1\\.View\\/TFInfo|viewunite\\.v1\\.View\\/(PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/1ca21c8b4734.js",
+      "line": "^https:\\/\\/grpc\\.biliapi\\.net\\/bilibili\\.app\\.(view\\.v1\\.View\\/TFInfo|viewunite\\.v1\\.View\\/(PlayPause|ViewEndPage))$ url script-echo-response https://raw.githubusercontent.com/Anymore0010/proxy-profile/master/QuantumultX/rules/rewrite/kelee/mock/5a2d08d1d71e.js",
       "reason": "与另一个 kelee 插件产出重复（保留先出现的那个：QuantumultX/rules/rewrite/kelee/bilibili.snippet）"
     },
     {

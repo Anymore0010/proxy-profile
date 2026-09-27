@@ -116,6 +116,35 @@ const stripQuotes = (s) => s.trim().replace(/^["']|["']$/g, "");
 /** `a.b c.d` -> `del(.a.b, .c.d)` */
 const jsonDelToJq = (paths) => `'del(${paths.map((p) => `.${p}`).join(", ")})'`;
 
+function echoScriptSource(bodyLiteral, isBinary) {
+  const head = [
+    "// 由 tools/convert-plugins.mjs 生成：为 QX `script-echo-response` 返回固定 body。",
+    "// 不能改用 `echo-response` —— 它的正文只接受本机 Data 目录里的文件，远程配置投递不了。",
+    "// 来源：Loon 插件的 mock-response-body / response.body.mock(...) 动作。",
+  ];
+  if (isBinary) {
+    // ⚠ QX 的 `body` 字段是**字符串**，塞 Uint8Array 会被 stringify 成 "[object Uint8Array]"。
+    // 二进制必须用 `bodyBytes` + ArrayBuffer —— 本仓库既有脚本（dianping.js / spotify-proto.js /
+    // baidumap.js）全部这么写。这些 mock body 只有 5~38 字节，直接内联字节字面量，
+    // 不用 atob（QX 跑 JavaScriptCore，atob 不保证存在）。
+    return [
+      ...head,
+      `const bytes = [${bodyLiteral}];`,
+      "const buf = new ArrayBuffer(bytes.length);",
+      "const view = new Uint8Array(buf);",
+      "for (let i = 0; i < bytes.length; i++) view[i] = bytes[i];",
+      "if (typeof $done === 'function') { $done({ bodyBytes: buf }); }",
+      "",
+    ].join("\n");
+  }
+  return [
+    ...head,
+    `const body = ${bodyLiteral};`,
+    "if (typeof $done === 'function') { $done({ body: body }); }",
+    "",
+  ].join("\n");
+}
+
 /** 按顶层逗号切参数（忽略引号/反引号/括号内的逗号）。 */
 /**
  * QX `echo-response` 的正文必须是**本机 Data 目录里的文件名**，不接受 URL / data: URI /
@@ -129,16 +158,6 @@ const jsonDelToJq = (paths) => `'del(${paths.map((p) => `.${p}`).join(", ")})'`;
  *
  * 生成物落在 QuantumultX/rules/rewrite/kelee/mock/<slug>.js，由调用方镜像进仓库。
  */
-function echoScriptSource(bodyJsLiteral, isBinary) {
-  return [
-    "// 由 tools/convert-plugins.mjs 生成：为 QX `script-echo-response` 返回固定 body。",
-    "// 不能改用 `echo-response` —— 那个动作的正文只接受本机 Data 目录里的文件，远程配置投递不了。",
-    "// 来源：Loon 插件的 mock-response-body / response.body.mock(...) 动作。",
-    "const body = " + bodyJsLiteral + ";",
-    "if (typeof $done === 'function') { $done({ body: body }); }",
-    "",
-  ].join("\n");
-}
 
 function splitArgs(s) {
   const out = [];
@@ -293,11 +312,22 @@ async function convertRewrite(line, plugin) {
       return `${dpat} url jsonjq-response-body '${inlined}'`;
     }
     if (kind === "body.mock") {
-      // `response.body.mock("json", `…`, 200)` / (…, true) —— 伪造成常量响应体。
-      const parts = splitArgs(rawArgs);
+      // `response.body.mock("json", `…`, 200)` / `response.body.mock("text", "<base64>", 200, true)`
+      // 第 4 个位置参数是 **base64 标志**（与 mock-response-body 的 mock-data-is-base64 同义），
+      // 忽略它会把 base64 字符串原样当 body 返回 —— 字节全错。
+      // Loon 的 `then` 体可以用 ` | ` 串联多个动作（`body.mock(...) | response.header.set(...)`）。
+      // 括号里只取**第一个动作**的参数 —— 不截断的话第 4 个参数会串进下一个动作
+      // （实测 `parts[3]` 变成 `true) | response.header.set("grpc-status"`，base64 标志被漏判）。
+      const firstAction = rawArgs.split(/\s*\|\s*/)[0];
+      const parts = splitArgs(firstAction);
       const kindName = stripQ(parts[0] ?? "text").toLowerCase();
       const payload = (parts[1] ?? "").trim().replace(/^`|`$/g, "").replace(/^"|"$/g, "");
       if (!payload) return skip(plugin, "Rewrite", line, "body.mock 无 payload"), null;
+      const isB64 = /^(?:true|1)$/i.test(stripQ(parts[3] ?? ""));
+      if (isB64) {
+        const bytes = Buffer.from(payload, "base64");
+        return { needsEchoScript: true, pattern: dpat, source: echoScriptSource([...bytes].join(","), true) };
+      }
       return { needsEchoScript: true, pattern: dpat, source: echoScriptSource(JSON.stringify(payload), false) };
     }
     if (kind === "header.set") {
@@ -345,9 +375,9 @@ async function convertRewrite(line, plugin) {
     const data = m3[1];
     const isB64 = /mock-data-is-base64\s*=\s*true/i.test(rest);
     if (isB64) {
-      // base64（gRPC protobuf 等二进制）：脚本里返回解码后的字节。
-      const lit = `Uint8Array.from(atob(${JSON.stringify(data)}), function (c) { return c.charCodeAt(0); })`;
-      return { needsEchoScript: true, pattern, source: echoScriptSource(lit, true) };
+      // base64（gRPC protobuf 等二进制）-> 解码成字节字面量，走 bodyBytes。
+      const bytes = Buffer.from(data, "base64");
+      return { needsEchoScript: true, pattern, source: echoScriptSource([...bytes].join(","), true) };
     }
     // 数据以 JSON 字符串字面量嵌进脚本（QX 脚本里 body 是字符串）。
     return { needsEchoScript: true, pattern, source: echoScriptSource(JSON.stringify(data), false) };
@@ -628,6 +658,9 @@ async function fetchAsset(url) {
 
 /** 把 mock 生成的脚本落盘到 QuantumultX/rules/rewrite/kelee/mock/，返回 script-echo-response 行。 */
 async function materializeEchoScript({ pattern, source }, plugin) {
+  // 确定性命名（内容哈希，无时间戳）：同名即同内容，CI 重跑不会产生无意义 diff。
+  // **不经过 mirrorAsset** —— 那个函数是给"远程 URL"用的（mirrorPathFor 要 new URL()），
+  // 且它「已存在且 size>100 就跳过」，而这里生成的脚本可能只有几十字节，会被反复重抓。
   const hash = createHash("sha1").update(pattern + "\u0000" + source).digest("hex").slice(0, 12);
   const rel = `QuantumultX/rules/rewrite/kelee/mock/${hash}.js`;
   const abs = join(ROOT, rel);
@@ -635,6 +668,7 @@ async function materializeEchoScript({ pattern, source }, plugin) {
     mkdirSync(dirname(abs), { recursive: true });
     if (!existsSync(abs) || readFileSync(abs, "utf8") !== source) writeFileSync(abs, source);
   }
+  usedMocks.add(rel);
   return `${pattern} url script-echo-response ${repoBase}/${rel}`;
 }
 
@@ -718,6 +752,7 @@ let deduped = 0;
  * 胜出者的规则先占据判重池；同组后续插件里与之重复的被丢弃并记账。
  * 注意只在**跨插件**判重；同一插件内同 URL 的多条规则是链式互补，全部保留。
  */
+const usedMocks = new Set();   // 本轮真正被引用的 mock 脚本（用于清理孤儿）
 const mergedFilters = new Map();   // 产物名 -> { header, lines }（被合并插件的分流累加到这里）
 const mergedFilterSigs = new Map(); // 产物名 -> Set<归一化分流行>
 const mergedRewrites = new Map();  // 产物名 -> { header, lines, hosts }
@@ -958,6 +993,16 @@ for (const [b, slot] of mergedRewrites) {
 // ---- 清理本轮不再产出的文件（禁用/改名/删除插件都不会留下孤儿） ----
 const pruned = [];
 if (!CHECK) {
+  // mock 脚本也要清孤儿：materializeEchoScript 在去重**之前**落盘，
+  // 被去重丢掉的规则会留下无人引用的脚本（实测残留 3 个）。
+  const mockDir = join(OUT_REWRITE, "mock");
+  if (existsSync(mockDir)) {
+    for (const f of readdirSync(mockDir)) {
+      if (!/\.js$/.test(f)) continue;
+      const rel = `QuantumultX/rules/rewrite/kelee/mock/${f}`;
+      if (!usedMocks.has(rel)) { rmSync(join(mockDir, f)); pruned.push(`mock/${f}`); }
+    }
+  }
   for (const dir of [OUT_REWRITE, OUT_FILTER]) {
     if (!existsSync(dir)) continue;
     for (const f of readdirSync(dir)) {

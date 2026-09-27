@@ -246,7 +246,7 @@
   "filters": [
     {
       "id": "filter-kelee-Block_HTTPDNS",
-      "tag": "HTTPDNS拦截器(分流)",
+      "tag": "HTTPDNS拦截器",
       "local_file": "QuantumultX/rules/filter/kelee/Block_HTTPDNS.list",
       "policy": null,
       "parser": false,
@@ -257,7 +257,7 @@
     },
     {
       "id": "filter-kelee-Prevent_DNS_Leaks",
-      "tag": "DNS防泄露(分流)",
+      "tag": "DNS防泄露",
       "local_file": "QuantumultX/rules/filter/kelee/Prevent_DNS_Leaks.list",
       "policy": null,
       "parser": false,
@@ -351,8 +351,19 @@
       "note": "**可选版本**（默认关闭）。与主版本同一套来源，但 blackmatrix7 用完整 Advertising.list：288195 条 / 约 11.5 MB，QX 启动要全部载入内存。\n与主版本只启一个 —— 同时启用会让同一域名被两份列表重复匹配。"
     },
     {
+      "id": "filter-kelee-bilibili",
+      "tag": "哔哩哔哩增强",
+      "local_file": "QuantumultX/rules/filter/kelee/bilibili.list",
+      "policy": null,
+      "parser": false,
+      "enabled": true,
+      "kelee_plugin": "bilibili.lpx",
+      "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
+      "note": "哔哩哔哩合并产物（分流）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者）+ kokoryh 自建 `bilibili.lpx`（补充）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**，kokoryh 独有的补充规则仍然保留。\n合并规则见 tools/convert-plugins.mjs 的 MERGE_GROUPS（plugins[0] = 胜出者）。"
+    },
+    {
       "id": "filter-kelee-12306_remove_ads",
-      "tag": "12306去广告(分流)",
+      "tag": "12306去广告",
       "local_file": "QuantumultX/rules/filter/kelee/12306_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -363,7 +374,7 @@
     },
     {
       "id": "filter-kelee-AliYunDrive_remove_ads",
-      "tag": "阿里云盘去广告(分流)",
+      "tag": "阿里云盘去广告",
       "local_file": "QuantumultX/rules/filter/kelee/AliYunDrive_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -374,7 +385,7 @@
     },
     {
       "id": "filter-kelee-Amap_remove_ads",
-      "tag": "高德地图去广告(分流)",
+      "tag": "高德地图去广告",
       "local_file": "QuantumultX/rules/filter/kelee/Amap_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -385,7 +396,7 @@
     },
     {
       "id": "filter-kelee-DragonRead_remove_ads",
-      "tag": "番茄小说去广告(分流)",
+      "tag": "番茄小说去广告",
       "local_file": "QuantumultX/rules/filter/kelee/DragonRead_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -396,7 +407,7 @@
     },
     {
       "id": "filter-kelee-PinDuoDuo_remove_ads",
-      "tag": "拼多多去广告(分流)",
+      "tag": "拼多多去广告",
       "local_file": "QuantumultX/rules/filter/kelee/PinDuoDuo_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -407,7 +418,7 @@
     },
     {
       "id": "filter-kelee-QQMusic_remove_ads",
-      "tag": "QQ音乐去广告(分流)",
+      "tag": "QQ音乐去广告",
       "local_file": "QuantumultX/rules/filter/kelee/QQMusic_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -418,7 +429,7 @@
     },
     {
       "id": "filter-kelee-Taobao_remove_ads",
-      "tag": "淘宝去广告(分流)",
+      "tag": "淘宝去广告",
       "local_file": "QuantumultX/rules/filter/kelee/Taobao_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -429,7 +440,7 @@
     },
     {
       "id": "filter-kelee-Tencent_Video_remove_ads",
-      "tag": "腾讯视频去广告(分流)",
+      "tag": "腾讯视频去广告",
       "local_file": "QuantumultX/rules/filter/kelee/Tencent_Video_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -440,7 +451,7 @@
     },
     {
       "id": "filter-kelee-Weibo_remove_ads",
-      "tag": "微博去广告(分流)",
+      "tag": "微博去广告",
       "local_file": "QuantumultX/rules/filter/kelee/Weibo_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -451,7 +462,7 @@
     },
     {
       "id": "filter-kelee-Weixin_Official_Accounts_remove_ads",
-      "tag": "微信公众号去广告(分流)",
+      "tag": "微信公众号去广告",
       "local_file": "QuantumultX/rules/filter/kelee/Weixin_Official_Accounts_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -461,19 +472,8 @@
       "note": "移植自 Loon 插件 Weixin_Official_Accounts_remove_ads.lpx 的 [Rule] 段。"
     },
     {
-      "id": "filter-kelee-bilibili",
-      "tag": "哔哩哔哩(分流)",
-      "local_file": "QuantumultX/rules/filter/kelee/bilibili.list",
-      "policy": null,
-      "parser": false,
-      "enabled": true,
-      "kelee_plugin": "bilibili.lpx",
-      "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "note": "哔哩哔哩合并产物（分流）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者）+ kokoryh 自建 `bilibili.lpx`（补充）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**，kokoryh 独有的补充规则仍然保留。\n合并规则见 tools/convert-plugins.mjs 的 MERGE_GROUPS（plugins[0] = 胜出者）。"
-    },
-    {
       "id": "filter-kelee-iQiYi_Video_remove_ads",
-      "tag": "爱奇艺去广告(分流)",
+      "tag": "爱奇艺去广告",
       "local_file": "QuantumultX/rules/filter/kelee/iQiYi_Video_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -484,7 +484,7 @@
     },
     {
       "id": "filter-kelee-smzdm_remove_ads",
-      "tag": "什么值得买去广告(分流)",
+      "tag": "什么值得买去广告",
       "local_file": "QuantumultX/rules/filter/kelee/smzdm_remove_ads.list",
       "policy": null,
       "parser": false,
@@ -495,7 +495,7 @@
     },
     {
       "id": "filter-kelee-Script-Hub",
-      "tag": "Script-Hub(分流)",
+      "tag": "Script-Hub",
       "local_file": "QuantumultX/rules/filter/kelee/Script-Hub.list",
       "policy": null,
       "parser": false,
@@ -503,19 +503,6 @@
       "kelee_plugin": "Script-Hub.lpx",
       "icon": "https://raw.githubusercontent.com/luestr/IconResource/main/Other_icon/120px/Script-Hub.png",
       "note": "移植自 Loon 插件 Script-Hub.lpx 的 [Rule] 段。"
-    },
-    {
-      "id": "filter-awavenue",
-      "tag": "AWAvenue 秋风广告规则",
-      "policy": "reject",
-      "vendor": true,
-      "upstream_url": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list",
-      "vendored_as": "filter/AWAvenue.list",
-      "local_file": "QuantumultX/rules/filter/AWAvenue.list",
-      "parser": false,
-      "enabled": true,
-      "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Advertising.png",
-      "note": "秋风广告规则。既是独立分流条目，也是「广告拦截合集MAX(分流)」的合并源之一。"
     },
     {
       "id": "filter-ai-fmz",
@@ -687,7 +674,7 @@
       "id": "rewrite-ads-max",
       "url": null,
       "local_file": "QuantumultX/rules/rewrite/AdsBlock.snippet",
-      "tag": "广告拦截合集(重写)",
+      "tag": "广告拦截合集",
       "parser": false,
       "enabled": true,
       "merges": [
@@ -732,6 +719,14 @@
       "enabled": true,
       "note": "替代 Loon 的 iRingo.WeatherKit.lpx。该项目自带 Quantumult X 版 snippet（官方文档有 QX 安装页），因此不再属于「未迁移」。注意它自带 hostname，QX 会自动并入 MITM。",
       "icon": "https://raw.githubusercontent.com/fmz200/wool_scripts/main/icons/apps/Apple_Weather.png"
+    },
+    {
+      "id": "rewrite-kelee-bilibili",
+      "tag": "哔哩哔哩增强",
+      "parser": false,
+      "enabled": true,
+      "local_file": "QuantumultX/rules/rewrite/kelee/bilibili.snippet",
+      "note": "哔哩哔哩合并产物（重写）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者，21 条）+ kokoryh 自建 `bilibili.lpx`（独有补充 5 条）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**。\n`_conversion-report.json` 的 merge_role 字段标明谁是胜出者、谁被合并。"
     },
     {
       "id": "rewrite-kelee-JD_Price",
@@ -1035,14 +1030,6 @@
       "parser": false,
       "enabled": false,
       "note": "对应源 Loon 的 Sub-Store.lpx（源配置里即 disabled）。工具类，需要时在 QX 里启用。"
-    },
-    {
-      "id": "rewrite-kelee-bilibili",
-      "tag": "哔哩哔哩(重写)",
-      "parser": false,
-      "enabled": true,
-      "local_file": "QuantumultX/rules/rewrite/kelee/bilibili.snippet",
-      "note": "哔哩哔哩合并产物（重写）。来源：kelee 托管的 `Bilibili_remove_ads.lpx`（胜出者，21 条）+ kokoryh 自建 `bilibili.lpx`（独有补充 5 条）。\n两者是同一作者 kokoryh 的两个版本；用户指定**以 kelee 那份的规则为准**。\n`_conversion-report.json` 的 merge_role 字段标明谁是胜出者、谁被合并。"
     }
   ],
   "tasks": [

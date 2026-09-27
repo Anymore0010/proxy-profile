@@ -1,18 +1,9 @@
 {
-  "total": 17,
-  "ok": 17,
+  "total": 16,
+  "ok": 16,
   "failed": 0,
-  "rules": 334890,
+  "rules": 333925,
   "resources": [
-    {
-      "id": "filter-awavenue",
-      "upstream": "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/main/Filters/AWAvenue-Ads-Rule-QuantumultX.list",
-      "file": "QuantumultX/rules/filter/AWAvenue.list",
-      "rules": 965,
-      "dropped": 0,
-      "adjusted": 0,
-      "error": null
-    },
     {
       "id": "filter-apple-ai",
       "upstream": "https://raw.githubusercontent.com/ddgksf2013/Filter/refs/heads/master/AppleIntelligence.list",
