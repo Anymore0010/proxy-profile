@@ -1,0 +1,14 @@
+# 我的分流规则 —— 手工维护，排在 [filter_remote] 第 1 位（先匹配先赢，永远压过其它条目）
+#
+# 用途：写你自己的放行/拦截决定。典型场景是「某条被广告大表误杀，我想放行」：
+#   这里写 direct，就能压过 AdsBlock 里的 reject —— 不用去改合并产物。
+#
+# 语法：host, 域名, direct|reject|策略组名
+#       host-suffix, 域名, ...
+#       ip-cidr, 1.2.3.4/32, ...
+#
+# 下面两条是已知的 kelee 白名单与 AdsBlock 的冲突（kelee 要 direct、AdsBlock 要 reject）。
+# 先放在这里 = kelee 的 direct 生效。不想要就删掉这行，让 AdsBlock 的 reject 生效。
+
+host, ad.12306.cn, direct
+host-suffix, cupid.iqiyi.com, direct

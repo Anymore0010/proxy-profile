@@ -245,6 +245,15 @@
   },
   "filters": [
     {
+      "id": "filter-my",
+      "tag": "我的分流",
+      "policy": null,
+      "local_file": "QuantumultX/rules/filter/My.list",
+      "parser": false,
+      "enabled": true,
+      "note": "我的分流规则（手工维护）。排在第 1 位 = 先匹配先赢，永远压过其它条目。\n用途：放行被广告大表误杀的域名（写 direct）、或自定义拦截。\n语法：host, 域名, direct|reject|策略组"
+    },
+    {
       "id": "filter-kelee-Block_HTTPDNS",
       "tag": "HTTPDNS拦截器(分流)",
       "local_file": "QuantumultX/rules/filter/kelee/Block_HTTPDNS.list",
@@ -664,6 +673,14 @@
     }
   ],
   "rewrites": [
+    {
+      "id": "rewrite-my",
+      "tag": "我的重写",
+      "parser": false,
+      "enabled": true,
+      "local_file": "QuantumultX/rules/rewrite/My.snippet",
+      "note": "我的重写规则（手工维护）。排在第 1 位 = 先匹配先赢。\n语法：<URL正则> url <动作> [参数]"
+    },
     {
       "id": "rewrite-httpdns-merged",
       "url": null,
@@ -1187,7 +1204,7 @@
     ],
     "final": "兜底策略"
   },
-  "_filter_order_note": "顺序由用户指定（先匹配先赢）：\n① HTTPDNS拦截器 → DNS防泄露\n② 各 App 的 kelee 分流（1-16 位）—— **必须排在 AdsBlock 之前**：\n   它们带 direct 白名单（如 `host, ad.12306.cn, direct`、`host-suffix, cupid.iqiyi.com, direct`），\n   而 AdsBlock 是通用大表、对这些域名是 reject。先匹配先赢 → 通用表排前面会把白名单一并 reject。\n③ 广告拦截合集 / 广告拦截合集-全量（只启一个）→ Script-Hub(分流)\n④ 服务分组（AWAvenue/AI/Apple…/Disney，force-policy）\n⑤ CN REGION → LAN（direct 兜底，必须最后）\n\n⚠ 这些约束**靠人维护**：validate 的 checkFilterOrder 对广告位置只 warn，\n且判据会被「12306去广告」这类含「广告」的 tag 命中，实际永不触发。",
+  "_filter_order_note": "顺序由用户指定（先匹配先赢）：\n① 我的分流（手工维护，永远第一）\n② HTTPDNS拦截器 → DNS防泄露\n③ 广告拦截合集 / 广告拦截合集-全量（只启一个）\n④ 各 App 的 kelee 分流 → Script-Hub(分流)\n⑤ 服务分组（AWAvenue/AI/Apple…/Disney，force-policy）\n⑥ CN REGION → LAN（direct 兜底，必须最后）\n\n⚠ 顺序约束靠人维护：validate 不会拦住位置错误。\n⚠ 已知取舍：AdsBlock 排在 kelee 逐 App 条目之前（用户指定），因此 `ad.12306.cn`/`cupid.iqiyi.com` 这两条 kelee 的 direct 白名单会被 reject 覆盖；要放行就在「我的分流」里写 direct。",
   "rule_merges": [
     {
       "id": "merge-ai",
@@ -1327,5 +1344,5 @@
     "prefer_local": true,
     "_comment": "统一为一份配置：所有资源都指向本仓库快照（prefer_local=true）。代价是上游修正最长延迟 7 天（每周快照任务同步一次）；好处是上游任何仓库失效都不影响使用，且脚本引用也已在快照阶段改写为本仓库地址。若想改回「上游直链（更新更快但依赖上游可用）」，把 prefer_local 设为 false 即可。"
   },
-  "_rewrite_order_note": "顺序由用户指定：HTTPDNS拦截器最前（所有去广告的依赖）→ 广告拦截合集(重写) → iRingo WeatherKit → 京东比价 → 微信外部链接解锁 → 各 App 的 kelee 重写 → BoxJs / Script-Hub / Sub-Store（默认禁用）。"
+  "_rewrite_order_note": "顺序由用户指定：\n① 我的重写（手工维护，永远第一）\n② HTTPDNS拦截器 → 广告拦截合集(重写) → iRingo WeatherKit → 京东比价 → 微信外部链接解锁 → 各 App 的 kelee 重写 → BoxJs / Script-Hub / Sub-Store（默认禁用）。"
 }

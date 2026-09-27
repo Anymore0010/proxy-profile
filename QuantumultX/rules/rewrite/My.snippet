@@ -1,0 +1,9 @@
+# 我的重写规则 —— 手工维护，排在 [rewrite_remote] 第 1 位（先匹配先赢）
+#
+# 语法：<URL正则> url <动作> [参数]
+#   例：^https:\/\/example\.com\/ad\/ url reject-dict
+#       ^https:\/\/example\.com\/api\/ url jsonjq-response-body 'del(.ad)'
+#
+# 当前为空。需要自定义重写时直接往这里加行。
+
+hostname =
