@@ -2,12 +2,10 @@
 # 源插件: https://kelee.one/Tool/Loon/Lpx/iQiYi_Video_remove_ads.lpx
 # 请勿手工编辑：改源插件后重新运行 bun tools/fetch-plugins.mjs && bun tools/convert-plugins.mjs
 
-^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.base.statistics)'
-^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.cards[] | select(.alias_name == "focus" or .alias_name == "ad_mobile_flow" or .alias_name == "ad_trueview"))'
+^https:\/\/cards\.iqiyi\.com\/views_home\/3\.0\/qy_home\? url jsonjq-response-body 'del(.base.statistics) | del(.cards[] | select(.alias_name == "focus" or .alias_name == "ad_mobile_flow" or .alias_name == "ad_trueview"))'
 ^https:\/\/cards\.iqiyi\.com\/views_category\/3\.0\/category_home\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.cards[] | select(.alias_name == "entrence_focus" or .alias_name == "ad_trueview"))'
 ^https:\/\/cards\.iqiyi\.com\/waterfall(-plt)?\/3\.0\/feed\? url jsonjq-response-body 'del(.base.statistics | select(.ad_str)) | del(.. | select(.block_class?))'
-^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'del(.kv_pair.activity_tab)'
-^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'del(.cards[] | select(.alias_name == "play_vip_promotion" or .alias_name == "play_detail_tag" or .alias_name == "play_chat_entrance" or .alias_name == "play_ad_no_vip" or .alias_name == "play_vertical_short_video" or .alias_name == "play_rap_custom" or .alias_name == "play_topical_tab" or .alias_name == "play_vertical" or .alias_name == "play_water_fall_like")) | del(.. | select(.block_class?))'
+^https:\/\/cards\.iqiyi\.com\/views_plt\/3\.0\/player_tabs_v2\? url jsonjq-response-body 'del(.kv_pair.activity_tab) | del(.cards[] | select(.alias_name == "play_vip_promotion" or .alias_name == "play_detail_tag" or .alias_name == "play_chat_entrance" or .alias_name == "play_ad_no_vip" or .alias_name == "play_vertical_short_video" or .alias_name == "play_rap_custom" or .alias_name == "play_topical_tab" or .alias_name == "play_vertical" or .alias_name == "play_water_fall_like")) | del(.. | select(.block_class?))'
 ^https:\/\/cards\.iqiyi\.com\/views_search\/3\.0\/hot_query_search\? url jsonjq-response-body '.cards |= map(select(.alias_name as $name | $name != "ad_trueview" and $name != "ad_mobile_flow" and $name != "search_mid_text_ad")) | if .base.statistics.ad_str? then del(.base.statistics) else . end'
 ^https?:\/\/iface2\.iqiyi\.com\/control\/3\.0\/init_proxy\? url reject-dict
 ^https?:\/\/act\.vip\.iqiyi\.com\/interact\/api\/v2\/show\? url reject-dict
@@ -15,11 +13,9 @@
 ^https?:\/\/iface2\.iqiyi\.com\/video\/3\.0\/v_interface_proxy\? url reject-dict
 ^https?:\/\/iface2\.iqiyi\.com\/views_pop\/3\.0\/pop_control\? url reject-dict
 ^https?:\/\/comment-card\.iqiyi\.com\/views_comment\/3\.0\/long_video_comments\? url jsonjq-response-body '.cards |= map(select(has("alias_name")))'
-^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body 'del(.theme_list)'
-^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body '.cards |= map(.items |= map(select(.other.bottom_tab_type == "rec" or .other.bottom_tab_type == "my")))'
+^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/bottom_theme\? url jsonjq-response-body 'del(.theme_list) | .cards |= map(.items |= map(select(.other.bottom_tab_type == "rec" or .other.bottom_tab_type == "my")))'
 ^https?:\/\/iface2\.iqiyi\.com\/views_menus\/3\.0\/home_top_menu\? url jsonjq-response-body '.nav_group_data[].nav_list |= map(select(. == "0" or . == "2" or . == "1007" or . == "1" or . == "6" or . == "3"))'
-^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'del(.content.resource.cast_device_ad)'
-^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body '.content.switchs.app_ad.app_ad_enable = 0 | .content.switchs.app_ad.app_ad_duration = 0 | .content.switchs.ios_tech.kPreadAdHintSwitch = 0 | .content.switchs.ios_tech.ad_download = 0 | .content.switchs.m_qiyi_ios_tech.KFocusAdVideoPlayTimesIn4G = 0'
+^https?:\/\/iface2\.iqiyi\.com\/fusion\/3\.0\/common_switch\? url jsonjq-response-body 'del(.content.resource.cast_device_ad) | .content.switchs.app_ad.app_ad_enable = 0 | .content.switchs.app_ad.app_ad_duration = 0 | .content.switchs.ios_tech.kPreadAdHintSwitch = 0 | .content.switchs.ios_tech.ad_download = 0 | .content.switchs.m_qiyi_ios_tech.KFocusAdVideoPlayTimesIn4G = 0'
 ^https?:\/\/(kjp|t7z)\.cupid\.iqiyi\.com\/mixer\? url jsonjq-response-body 'del(.adSlots)'
 ^https?:\/\/search\.video\.iqiyi\.com\/q\? url jsonjq-response-body 'del(.data)'
 ^https?:\/\/iface2\.iqiyi\.com\/aggregate\/3\.0\/getMyMenus\? url jsonjq-response-body '.data |= map(select(.statistic.block != "wd_liebiao_2") | select(all(.menuList[]?.statistic2.block; . != "wd_liebiao_3")))'

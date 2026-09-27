@@ -100,7 +100,7 @@
       "name": "拼多多去广告",
       "enabled": true,
       "rules": 14,
-      "rewrites": 31,
+      "rewrites": 30,
       "hostnames": 2
     },
     {
@@ -116,7 +116,7 @@
       "name": "闲鱼去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 24,
+      "rewrites": 23,
       "hostnames": 2
     },
     {
@@ -188,7 +188,7 @@
       "name": "爱奇艺去广告",
       "enabled": true,
       "rules": 6,
-      "rewrites": 21,
+      "rewrites": 17,
       "hostnames": 1
     },
     {
@@ -236,7 +236,7 @@
       "name": "什么值得买去广告",
       "enabled": true,
       "rules": 1,
-      "rewrites": 22,
+      "rewrites": 18,
       "hostnames": 10
     },
     {
@@ -244,7 +244,7 @@
       "name": "知乎去广告",
       "enabled": true,
       "rules": 0,
-      "rewrites": 26,
+      "rewrites": 24,
       "hostnames": 5
     },
     {
@@ -649,13 +649,13 @@
     },
     {
       "plugin": "PinDuoDuo_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/api\\.pinduoduo\\.com\\/api\\/alexa\\/homepage\\/hub\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "同URL多条jq已串接",
+      "detail": "同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），已用 jq 管道 ' | ' 串成一条：31 -> 30 行"
     },
     {
       "plugin": "FleaMarket_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/g-acs\\.m\\.goofish\\.com\\/gw\\/mtop\\.taobao\\.idlemtopsearch\\.s —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "同URL多条jq已串接",
+      "detail": "同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），已用 jq 管道 ' | ' 串成一条：24 -> 23 行"
     },
     {
       "plugin": "QuarkBrowser_remove_ads.lpx",
@@ -679,53 +679,18 @@
     },
     {
       "plugin": "iQiYi_Video_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/cards\\.iqiyi\\.com\\/views_home\\/3\\.0\\/qy_home\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "iQiYi_Video_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/cards\\.iqiyi\\.com\\/views_plt\\/3\\.0\\/player_tabs_v2\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "iQiYi_Video_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https?:\\/\\/iface2\\.iqiyi\\.com\\/views_menus\\/3\\.0\\/bottom_theme\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "iQiYi_Video_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https?:\\/\\/iface2\\.iqiyi\\.com\\/fusion\\/3\\.0\\/common_switch\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "同URL多条jq已串接",
+      "detail": "同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），已用 jq 管道 ' | ' 串成一条：21 -> 17 行"
     },
     {
       "plugin": "smzdm_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/app-api\\.smzdm\\.com\\/util\\/update$ —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "smzdm_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/app-api\\.smzdm\\.com\\/util\\/update$ —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "smzdm_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/haojia-api\\.smzdm\\.com\\/home\\/list\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "smzdm_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/s-api\\.smzdm\\.com\\/sou\\/filter\\/tags\\/hot_tags\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "同URL多条jq已串接",
+      "detail": "同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），已用 jq 管道 ' | ' 串成一条：22 -> 18 行"
     },
     {
       "plugin": "Zhihu_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/(api|page-info)(?:\\.zhihu)?\\.com\\/answers\\/v\\d\\/\\d+(?:\\?.*) —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
-    },
-    {
-      "plugin": "Zhihu_remove_ads.lpx",
-      "kind": "同插件同URL多条（链式保留）",
-      "detail": "^https:\\/\\/api\\.zhihu\\.com\\/topstory\\/recommend\\? —— Loon/QX 对同 URL 的多条 body 重写按顺序叠加生效，全部保留"
+      "kind": "同URL多条jq已串接",
+      "detail": "同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），已用 jq 管道 ' | ' 串成一条：26 -> 24 行"
     },
     {
       "plugin": "YouTube_remove_ads.lpx",

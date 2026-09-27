@@ -920,6 +920,35 @@ for (const p of pluginOrder) {
   const filters = [];
   const rewrites = [];
 
+  // 合并同一插件内「同 URL 的多条 jsonjq 表达式」为一条。
+  //
+  // ⚠ 这是 QX 与 Loon 的**行为差异**，不是去重：Loon 对同 URL 的多条 body 重写是
+  // **链式叠加**（作者刻意分开写），QL 只执行**先匹配的第一条** —— 后面的静默不生效。
+  // 实测：拼多多的 `api.pinduoduo.com/api/alexa/homepage/hub?` 有两条
+  // （`del(banner...)` 与 `bottom_tabs 过滤`），QX 只跑第一条 → 「去除底部按钮」永远不生效。
+  // 全仓库共 13 对受影响（拼多多/闲鱼/知乎/爱奇艺/smzdm）。
+  //
+  // jq 的 `A | B` 就是顺序管道，语义上等价于「先跑 A 再跑 B」，
+  // 所以直接串成一条表达式即可。
+  const mergeSameUrlJq = (list) => {
+    const groups = new Map();     // 完整行前缀(URL 正则 + 动作名) -> 表达式列表
+    const order = [];
+    for (const line of list) {
+      const m = line.match(/^(.*?\surl\s+(jsonjq-response-body|jsonjq-request-body))\s+'([\s\S]*)'\s*$/);
+      if (!m) { order.push({ raw: line }); continue; }
+      const key = m[1];
+      // 只有多条同 URL 的同名动作才需要合并；单条保持原样（避免无谓改写）
+      if (!groups.has(key)) { groups.set(key, []); order.push({ key }); }
+      groups.get(key).push(m[3]);
+    }
+    return order.map((o) => {
+      if (o.raw !== undefined) return o.raw;
+      const exprs = groups.get(o.key);
+      if (exprs.length === 1) return `${o.key} '${exprs[0]}'`;
+      return `${o.key} '${exprs.join(" | ")}'`;
+    });
+  };
+
   for (const raw of sectionLines(text, "Rule") ?? []) {
     const line = cleanRule(raw);
     if (!line) continue;
@@ -947,6 +976,21 @@ for (const p of pluginOrder) {
     if (!r) continue;
     // Loon `generic` 菜单脚本 -> QX [task_local] 的 event-interaction
     rewrites.push(r.line);
+  }
+
+  // 先合并「同插件内同 URL 的多条 jsonjq」（QX 只跑第一条，必须串成一条）
+  {
+    const before = rewrites.length;
+    const merged = mergeSameUrlJq(rewrites);
+    rewrites.length = 0;
+    rewrites.push(...merged);
+    if (merged.length < before) {
+      notes.push({
+        plugin: p.name, kind: "同URL多条jq已串接",
+        detail: `同一 URL 的多条 jsonjq 表达式在 QX 里**只执行第一条**（Loon 是链式叠加），`
+          + `已用 jq 管道 ' | ' 串成一条：${before} -> ${merged.length} 行`,
+      });
+    }
   }
 
   // kelee 侧内部去重，与**其他源**的跨源去重已移交 tools/vendor-rules.mjs 的合并步骤

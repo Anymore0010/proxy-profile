@@ -508,6 +508,40 @@ function checkOverlongRuleLines() {
   return n;
 }
 
+/**
+ * 同一产物内「同 URL 多条 body 重写」检查。
+ *
+ * QX 与 Loon 的**行为差异**：Loon 对同 URL 的多条 body 重写是链式叠加（作者刻意分开写
+ * 以分段处理），QX 只执行**先匹配的第一条**，后面的静默不生效。
+ * 实测踩到：拼多多 `api/alexa/homepage/hub?` 的两条（`del(banner)` 与 `bottom_tabs 过滤`）
+ * 在 QX 下只跑第一条 → 用户报「拼多多去除底部按钮还是不生效」。
+ *
+ * 转换器已把同一插件内的同 URL 多条 jsonjq 用 ` | ` 串成一条；
+ * 这条断言保证以后新增的插件也不会再漏（跨源的那类由 checkRewriteDuplicates 管）。
+ */
+function checkSameUrlBodyRewrites() {
+  const dir = join(ROOT, "QuantumultX", "rules");
+  if (!existsSync(dir)) return 0;
+  let bad = 0;
+  for (const f of readdirSync(dir, { recursive: true }).map(String)) {
+    if (!/\.snippet$/.test(f)) continue;
+    const rel = `QuantumultX/rules/${f}`;
+    const seen = new Map();
+    for (const l of readFileSync(join(dir, f), "utf8").split(/\r?\n/)) {
+      const s = l.trim();
+      if (!s || s.startsWith("#") || !/\surl\s+(jsonjq-|script-)/.test(s)) continue;
+      const pat = s.split(/\s+url\s+/)[0];
+      if (seen.has(pat)) {
+        err(rel, 0,
+          `同一 URL 有 ${seen.get(pat) + 1} 条 body 重写 —— QX 只执行第一条（Loon 是链式叠加）: ${pat.slice(0, 80)}`);
+        bad++;
+      }
+      seen.set(pat, (seen.get(pat) ?? 0) + 1);
+    }
+  }
+  return bad;
+}
+
 function checkRewriteDuplicates() {
   const src = JSON.parse(readFileSync(join(ROOT, "tools", "sources.json"), "utf8"));
 
@@ -681,6 +715,7 @@ const repoSlug = resolveRepoBase(ROOT).slug;
   const dupes = checkRewriteDuplicates();
   const droppedUncovered = checkDroppedRulesStillCovered();
   const overlong = checkOverlongRuleLines();
+  const sameUrlBody = checkSameUrlBodyRewrites();
   console.log(`重写去重检查  跨源重复脚本重写: ${dupes}`);
   const hn = checkRewriteHostnames();
   console.log(`MITM 主机名检查  含脚本规则且自带 hostname 的文件: ${hn}`);
