@@ -134,6 +134,26 @@ const jqPath = (path) =>
 /** `a.b c.d` -> `del(.a.b, .c.d)` */
 const jsonDelToJq = (paths) => `'del(${paths.map(jqPath).join(", ")})'`;
 
+/**
+ * QX 的 rewrite 是**单行**解析的，超长行会被判「不合法」（实测：夸克 703 个路径的
+ * 单个 `del(...)` 有 27161 字符，QX 只报「第一行不合法」且看不到细节）。
+ * 参照野生 QX 资源的分布 —— 32 条 jsonjq 规则里最长 403 字符 —— 把超长表达式**拆成
+ * 多条同 URL 的规则**（QX 对同 URL 的多条 body 重写是顺序生效的，语义等价）。
+ *
+ * 阈值取 100 个路径/条：实测约 3.8K 字符，仍比野生极限大一个数量级但远离 27K。
+ */
+const JQ_PATHS_PER_RULE = 100;
+
+/** 把超长的 del(...) 拆成多条（每条 ≤ JQ_PATHS_PER_RULE 个路径）。 */
+function splitJsonDel(paths) {
+  if (paths.length <= JQ_PATHS_PER_RULE) return [jsonDelToJq(paths)];
+  const out = [];
+  for (let i = 0; i < paths.length; i += JQ_PATHS_PER_RULE) {
+    out.push(jsonDelToJq(paths.slice(i, i + JQ_PATHS_PER_RULE)));
+  }
+  return out;
+}
+
 function echoScriptSource(bodyLiteral, isBinary) {
   const head = [
     "// 由 tools/convert-plugins.mjs 生成：为 QX `script-echo-response` 返回固定 body。",
@@ -265,7 +285,16 @@ async function convertRewrite(line, plugin) {
   if (a === "response-body-json-del") {
     const paths = rest.trim().split(/\s+/).filter(Boolean);
     if (!paths.length) return skip(plugin, "Rewrite", line, "response-body-json-del 无路径参数"), null;
-    return `${pattern} url jsonjq-response-body ${jsonDelToJq(paths)}`;
+    const exprs = splitJsonDel(paths);
+    if (exprs.length > 1) {
+      notes.push({
+        plugin, kind: "超长 jq 表达式已拆分",
+        detail: `${pattern.slice(0, 60)} —— ${paths.length} 个路径的单个 del(...) 过长，`
+          + `拆成 ${exprs.length} 条同 URL 规则（QX 是同 URL 多条 body 重写顺序生效，语义等价）`,
+      });
+    }
+    // 多行返回：调用方按数组展开
+    return exprs.map((e) => `${pattern} url jsonjq-response-body ${e}`);
   }
   if (a === "response-body-json-replace") {
     const toks = rest.trim().split(/\s+/).filter(Boolean);
@@ -273,7 +302,9 @@ async function convertRewrite(line, plugin) {
       return skip(plugin, "Rewrite", line, "response-body-json-replace 参数不成对"), null;
     }
     const sets = [];
-    for (let i = 0; i < toks.length; i += 2) sets.push(`.${toks[i]} = ${toks[i + 1]}`);
+    // 路径必须走 jqPath()：`foo-bar` 之类的段不加引号会被 jq 当减法解析
+    // （同类 bug 的另一个出口 —— 夸克那条就是 `result.quark-countdown-2025` 踩的）。
+    for (let i = 0; i < toks.length; i += 2) sets.push(`${jqPath(toks[i])} = ${toks[i + 1]}`);
     return `${pattern} url jsonjq-response-body '${sets.join(" | ")}'`;
   }
   if (a === "response-body-json-jq" || a === "request-body-json-jq") {
@@ -852,7 +883,9 @@ for (const p of pluginOrder) {
     if (r && typeof r === "object" && r.needsEchoScript) {
       r = await materializeEchoScript(r, p.name);
     }
-    if (r) rewrites.push(r);
+    // convertRewrite 可返回数组（超长 jq 表达式被拆成多条同 URL 规则）
+    if (Array.isArray(r)) rewrites.push(...r);
+    else if (r) rewrites.push(r);
   }
   for (const raw of sectionLines(text, "Script") ?? []) {
     const line = cleanRule(raw);
