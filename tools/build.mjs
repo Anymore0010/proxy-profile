@@ -233,7 +233,13 @@ function buildFilterRemote(filters) {
   lines.push(comment("FILTER_REGION / FILTER_LAN 是 Quantumult X 内置资源。"));
   lines.push(comment("顺序即优先级：CN REGION 必须保持在最后。"));
   lines.push("");
+  // `merge_source_only: true` 的条目**只作为合并源**参与 vendor-rules 的合并，
+  // 不输出成 [filter_remote] 条目 —— 它的规则已经在合并产物里了，
+  // 再列一条会让同一批规则在两个来源重复匹配。
+  // 与 `enabled: false` 的区别：那个仍会输出条目（界面里能看到、可手动打开），
+  // 这个则完全不出现。刷新照样由 `vendor: true` 驱动，不受影响。
   for (const f of filters) {
+    if (f.merge_source_only) continue;
     const parts = [filterUrl(f), `tag=${f.tag}`];
     // 规则自带策略的资源（如各 bm7 原生列表）不设 force-policy，否则会覆盖其原有策略。
     if (f.policy) parts.push(`force-policy=${f.policy}`);

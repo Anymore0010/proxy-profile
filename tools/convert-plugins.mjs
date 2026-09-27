@@ -113,8 +113,26 @@ const stripQuotes = (s) => s.trim().replace(/^["']|["']$/g, "");
 
 // ---------------------------------------------------------------- 重写
 
+/**
+ * `a.b c.d` -> `del(.a.b, .c.d)`
+ *
+ * ⚠ 路径段必须逐段判断是否需要用 jq 的 `["..."]` 形式：
+ * jq 的 `.foo-bar` 会被解析成**减法**（`.foo - bar`），`.2025` 也不是合法标识符。
+ * 实测踩到：夸克的 `result.quark-countdown-2025` 原先原样输出，
+ * 整个 `del(...)` 表达式变成非法 jq，QX 解析失败（该行还有 703 个路径，27158 字符）。
+ * 规则：仅 `[A-Za-z_][A-Za-z0-9_]*` 可用 `.name`，其余一律 `["..."]`。
+ */
+const jqPath = (path) =>
+  path
+    .split(".")
+    .map((seg) =>
+      /^[A-Za-z_][A-Za-z0-9_]*$/.test(seg)
+        ? `.${seg}`
+        : `[${JSON.stringify(seg)}]`,
+    )
+    .join("");
 /** `a.b c.d` -> `del(.a.b, .c.d)` */
-const jsonDelToJq = (paths) => `'del(${paths.map((p) => `.${p}`).join(", ")})'`;
+const jsonDelToJq = (paths) => `'del(${paths.map(jqPath).join(", ")})'`;
 
 function echoScriptSource(bodyLiteral, isBinary) {
   const head = [
