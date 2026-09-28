@@ -13,7 +13,7 @@
 ################################################################
 # 第 2 块来源: 广告平台拦截器（kelee，白名单优先）
 #   QuantumultX/rules/filter/kelee/BlockAdvertisers.list
-#   本块贡献 325 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 326 条（与前面重复的已跳过，先到者优先）
 ################################################################
 host-keyword, adstrategy, reject
 host, lf-ad-ies.bytecdn.cn, reject
@@ -190,6 +190,7 @@ host, df.tanx.com, reject
 host, opehs.tanx.com, reject
 host, beacon-api.aliyuncs.com, reject
 host, adash.man.aliyuncs.com, reject
+host, adashx.m.taobao.com, reject
 host, applog.uc.cn, reject
 host, atoken.m.taobao.com, reject
 host, baichuan-sdk.alicdn.com, reject
@@ -287436,7 +287437,7 @@ ip6-cidr, 240e:928:1400:10::25/128, reject
 ################################################################
 # 第 5 块来源: AWAvenue 秋风广告规则（本仓库 vendor 产物）
 #   QuantumultX/rules/filter/AWAvenue.list
-#   本块贡献 787 条（与前面重复的已跳过，先到者优先）
+#   本块贡献 786 条（与前面重复的已跳过，先到者优先）
 ################################################################
 host, 1500020991.vodplayer.wxamedia.com, reject
 host, 1500022744.vodplayer.wxamedia.com, reject
@@ -287477,7 +287478,6 @@ host, ad4.sina.com.cn, reject
 host, adapi.yynetwk.com, reject
 host, adash-emas.cn-hangzhou.aliyuncs.com, reject
 host, adashbc.ut.taobao.com, reject
-host, adashx.m.taobao.com, reject
 host, adbox.sina.com.cn, reject
 host, adcanvas.com, reject
 host, adclick.g.doubleclick.net, reject

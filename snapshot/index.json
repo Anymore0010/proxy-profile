@@ -415,6 +415,14 @@
       "error": null
     },
     {
+      "id": "icon-filter-kelee-bilibili",
+      "kind": "icon",
+      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
+      "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
+      "status": 200,
+      "error": null
+    },
+    {
       "id": "icon-filter-kelee-12306_remove_ads",
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/12306.png",
@@ -435,14 +443,6 @@
       "kind": "icon",
       "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Amap.png",
       "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/Amap.png",
-      "status": 200,
-      "error": null
-    },
-    {
-      "id": "icon-filter-kelee-Bilibili_remove_ads",
-      "kind": "icon",
-      "url": "https://raw.githubusercontent.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
-      "snapshot": "snapshot/github.com/luestr/IconResource/main/App_icon/120px/Bilibili.png",
       "status": 200,
       "error": null
     },

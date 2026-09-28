@@ -177,6 +177,7 @@ host, df.tanx.com, reject
 host, opehs.tanx.com, reject
 host, beacon-api.aliyuncs.com, reject
 host, adash.man.aliyuncs.com, reject
+host, adashx.m.taobao.com, reject
 host, applog.uc.cn, reject
 host, atoken.m.taobao.com, reject
 host, baichuan-sdk.alicdn.com, reject

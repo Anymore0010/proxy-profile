@@ -22,7 +22,7 @@
       "plugin": "BlockAdvertisers.lpx",
       "name": "广告平台拦截器",
       "enabled": true,
-      "rules": 341,
+      "rules": 342,
       "rewrites": 4,
       "hostnames": 3
     },
